@@ -10,8 +10,6 @@ import numpy
 import scipy
 import pandas
 
-import rpy2
-
 import PyQt4
 
 print("Everything works!!")
