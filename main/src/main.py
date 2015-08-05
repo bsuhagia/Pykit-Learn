@@ -297,8 +297,11 @@ class Ui_TabWidget(QtGui.QTabWidget):
     def openfile(self):
         filename = QFileDialog.getOpenFileName(self, 'Open File','/',"Data files (*.csv)")
         fn = str(filename)
-        dataset = pd.read_csv(fn, sep=",")
-        print(dataset)
+        if (fn):
+            dataset = pd.read_csv(fn, sep=",")
+            print(dataset)
+        else:
+            print 'File does not exist'
 
 if __name__ == '__main__':
     app = QtGui.QApplication(sys.argv)
