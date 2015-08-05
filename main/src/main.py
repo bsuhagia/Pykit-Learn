@@ -7,6 +7,9 @@ Created on Mon Aug  3 14:13:25 2015
 
 import sys
 from PyQt4 import QtCore, QtGui
+import pandas as pd
+from PyQt4.QtCore import *
+from PyQt4.QtGui import *
 
 try:
     _fromUtf8 = QtCore.QString.fromUtf8
@@ -286,6 +289,16 @@ class Ui_TabWidget(QtGui.QTabWidget):
         TabWidget.setTabText(TabWidget.indexOf(self.tab_3), _translate("TabWidget", "Reduce", None))
         TabWidget.setTabText(TabWidget.indexOf(self.tab_5), _translate("TabWidget", "Visualize", None))
         TabWidget.setTabText(TabWidget.indexOf(self.tab_4), _translate("TabWidget", "Other", None))
+
+        # actions goes here
+        self.pushButton_5.clicked.connect(self.openfile)
+
+    # action functions goes here
+    def openfile(self):
+        filename = QFileDialog.getOpenFileName(self, 'Open File','/',"Data files (*.csv)")
+        fn = str(filename)
+        dataset = pd.read_csv(fn, sep=",")
+        print(dataset)
 
 if __name__ == '__main__':
     app = QtGui.QApplication(sys.argv)
