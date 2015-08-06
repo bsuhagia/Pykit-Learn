@@ -14,7 +14,7 @@
    <string>Scikit GUI</string>
   </property>
   <property name="currentIndex">
-   <number>7</number>
+   <number>0</number>
   </property>
   <widget class="QWidget" name="upload_tab">
    <attribute name="title">
