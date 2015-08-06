@@ -10,6 +10,11 @@ from PyQt4 import QtCore, QtGui
 import pandas as pd
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
+from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg as FigureCanvas
+from matplotlib.backends.backend_qt4agg import NavigationToolbar2QTAgg as NavigationToolbar
+import matplotlib.pyplot as plt
+import seaborn as sns
+from matplotlib.backends.backend_pdf import PdfPages
 
 try:
     _fromUtf8 = QtCore.QString.fromUtf8
@@ -30,6 +35,9 @@ class Ui_TabWidget(QtGui.QTabWidget):
         QtGui.QWidget.__init__(self)
         self.setupUi(self)
     def setupUi(self, TabWidget):
+        self.figure = plt.figure()
+        self.canvas = FigureCanvas(self.figure)
+
         TabWidget.setObjectName(_fromUtf8("TabWidget"))
         TabWidget.resize(987, 737)
         self.Supervised = QtGui.QWidget()
@@ -73,6 +81,7 @@ class Ui_TabWidget(QtGui.QTabWidget):
         self.graphicsView = QtGui.QGraphicsView(self.verticalLayoutWidget_2)
         self.graphicsView.setObjectName(_fromUtf8("graphicsView"))
         self.verticalLayout_2.addWidget(self.graphicsView)
+        self.verticalLayout_2.addWidget(self.canvas)  
         self.progressBar = QtGui.QProgressBar(self.Supervised)
         self.progressBar.setGeometry(QtCore.QRect(20, 683, 941, 16))
         self.progressBar.setProperty("value", 0)
@@ -295,13 +304,24 @@ class Ui_TabWidget(QtGui.QTabWidget):
 
     # action functions goes here
     def openfile(self):
+        pp = PdfPages('plot.pdf')
         filename = QFileDialog.getOpenFileName(self, 'Open File','/',"Data files (*.csv)")
         fn = str(filename)
         if (fn):
             dataset = pd.read_csv(fn, sep=",")
-            print(dataset)
+            g = sns.PairGrid(dataset)
+            g.map(plt.scatter)
+            plt.show()
+            # self.canvas.draw()
+
         else:
             print 'File does not exist'
+    # def plot(self):
+    #     data = [random.random() for i in range(10)]
+    #     ax = self.figure.add_subplot(111)
+    #     ax.hold(False)
+    #     ax.plot(data, '*-')
+    #     self.canvas.draw()
 
 if __name__ == '__main__':
     app = QtGui.QApplication(sys.argv)
