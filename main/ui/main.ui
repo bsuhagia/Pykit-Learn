@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>TabWidget</class>
- <widget class="QTabWidget" name="TabWidget">
+ <class>main_tab</class>
+ <widget class="QTabWidget" name="main_tab">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -14,9 +14,9 @@
    <string>Scikit GUI</string>
   </property>
   <property name="currentIndex">
-   <number>0</number>
+   <number>7</number>
   </property>
-  <widget class="QWidget" name="Supervised">
+  <widget class="QWidget" name="upload_tab">
    <attribute name="title">
     <string>Upload</string>
    </attribute>
@@ -31,21 +31,21 @@
     </property>
     <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
-      <widget class="QPushButton" name="pushButton_5">
+      <widget class="QPushButton" name="openfile_btn">
        <property name="text">
         <string>Open File</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="pushButton_4">
+      <widget class="QPushButton" name="openurl_btn">
        <property name="text">
         <string>Open URL</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="pushButton_3">
+      <widget class="QPushButton" name="generate_btn">
        <property name="text">
         <string>Generate</string>
        </property>
@@ -64,14 +64,14 @@
     </property>
     <layout class="QVBoxLayout" name="verticalLayout">
      <item>
-      <widget class="QLabel" name="label">
+      <widget class="QLabel" name="datainfo_label">
        <property name="text">
         <string>Dataset Information</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QTextBrowser" name="textBrowser"/>
+      <widget class="QTextBrowser" name="datainfotext"/>
      </item>
     </layout>
    </widget>
@@ -86,14 +86,14 @@
     </property>
     <layout class="QVBoxLayout" name="verticalLayout_2">
      <item>
-      <widget class="QLabel" name="label_2">
+      <widget class="QLabel" name="dataplotter_label">
        <property name="text">
         <string>Dataset Plotter</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QGraphicsView" name="graphicsView"/>
+      <widget class="QGraphicsView" name="dataplottergraphics"/>
      </item>
     </layout>
    </widget>
@@ -111,7 +111,7 @@
     </property>
    </widget>
   </widget>
-  <widget class="QWidget" name="Unsupervised">
+  <widget class="QWidget" name="preprocess_tab">
    <property name="enabled">
     <bool>true</bool>
    </property>
@@ -126,49 +126,46 @@
      <rect>
       <x>0</x>
       <y>0</y>
-      <width>811</width>
+      <width>981</width>
       <height>51</height>
      </rect>
     </property>
     <layout class="QHBoxLayout" name="horizontalLayout_2">
      <item>
-      <widget class="QPushButton" name="pushButton_6">
-       <property name="text">
-        <string>Normalization</string>
+      <widget class="QTabWidget" name="preprocess_tab_2">
+       <property name="currentIndex">
+        <number>0</number>
        </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="pushButton_7">
-       <property name="text">
-        <string>Standarization</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="pushButton_8">
-       <property name="text">
-        <string>Binarization</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="pushButton_24">
-       <property name="text">
-        <string>Imputation</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="pushButton_33">
-       <property name="text">
-        <string>Whitening</string>
-       </property>
+       <widget class="QWidget" name="normalize_tab">
+        <attribute name="title">
+         <string>Normalize</string>
+        </attribute>
+       </widget>
+       <widget class="QWidget" name="standardize_tab">
+        <attribute name="title">
+         <string>Standardize</string>
+        </attribute>
+       </widget>
+       <widget class="QWidget" name="binarize_tab">
+        <attribute name="title">
+         <string>Binarize</string>
+        </attribute>
+       </widget>
+       <widget class="QWidget" name="impute_tab">
+        <attribute name="title">
+         <string>Impute</string>
+        </attribute>
+       </widget>
+       <widget class="QWidget" name="noise_tab">
+        <attribute name="title">
+         <string>Add Noise</string>
+        </attribute>
+       </widget>
       </widget>
      </item>
     </layout>
    </widget>
-   <widget class="QLabel" name="label_3">
+   <widget class="QLabel" name="attr_label">
     <property name="geometry">
      <rect>
       <x>20</x>
@@ -192,35 +189,35 @@
     </property>
     <layout class="QVBoxLayout" name="verticalLayout_3">
      <item>
-      <widget class="QCheckBox" name="checkBox_2">
+      <widget class="QCheckBox" name="attr_checkbox1">
        <property name="text">
         <string>Attribute 1</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QCheckBox" name="checkBox_3">
+      <widget class="QCheckBox" name="attr_checkbox2">
        <property name="text">
         <string>Attribute 2</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QCheckBox" name="checkBox_4">
+      <widget class="QCheckBox" name="attr_checkbox3">
        <property name="text">
         <string>Attribute 3</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QCheckBox" name="checkBox_5">
+      <widget class="QCheckBox" name="attr_checkbox4">
        <property name="text">
         <string>Attribute 4</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QCheckBox" name="checkBox">
+      <widget class="QCheckBox" name="attr_checkbox5">
        <property name="text">
         <string>Attribute 5</string>
        </property>
@@ -228,7 +225,7 @@
      </item>
     </layout>
    </widget>
-   <widget class="QPushButton" name="pushButton_25">
+   <widget class="QPushButton" name="remove_attr_btn">
     <property name="geometry">
      <rect>
       <x>10</x>
@@ -242,125 +239,118 @@
     </property>
    </widget>
   </widget>
-  <widget class="QWidget" name="e">
+  <widget class="QWidget" name="regression_tab">
    <attribute name="title">
     <string>Regression</string>
-   </attribute>
-   <widget class="QWidget" name="horizontalWidget_3" native="true">
-    <property name="geometry">
-     <rect>
-      <x>0</x>
-      <y>0</y>
-      <width>801</width>
-      <height>51</height>
-     </rect>
-    </property>
-    <layout class="QHBoxLayout" name="horizontalLayout_3">
-     <item>
-      <widget class="QPushButton" name="pushButton_9">
-       <property name="text">
-        <string>Linear</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="pushButton">
-       <property name="text">
-        <string>Polynomial</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="pushButton_2">
-       <property name="text">
-        <string>Least Squares</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="pushButton_10">
-       <property name="text">
-        <string>Logistic</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="pushButton_11">
-       <property name="text">
-        <string>Gradient Descent</string>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </widget>
-  </widget>
-  <widget class="QWidget" name="tab">
-   <attribute name="title">
-    <string>Classify</string>
    </attribute>
    <widget class="QWidget" name="horizontalWidget_4" native="true">
     <property name="geometry">
      <rect>
       <x>0</x>
       <y>0</y>
-      <width>841</width>
+      <width>981</width>
       <height>51</height>
      </rect>
     </property>
-    <layout class="QHBoxLayout" name="horizontalLayout_4">
+    <layout class="QHBoxLayout" name="horizontalLayout_6">
      <item>
-      <widget class="QPushButton" name="pushButton_12">
-       <property name="text">
-        <string>Decision Tree</string>
+      <widget class="QTabWidget" name="regression_tab_2">
+       <property name="currentIndex">
+        <number>0</number>
        </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="pushButton_13">
-       <property name="text">
-        <string>Ensemble</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="pushButton_14">
-       <property name="text">
-        <string>Neural Nets</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="pushButton_26">
-       <property name="text">
-        <string>SVM</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="pushButton_27">
-       <property name="text">
-        <string>Bayes Nets</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="pushButton_28">
-       <property name="text">
-        <string>kNN</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="pushButton_29">
-       <property name="text">
-        <string>Others</string>
-       </property>
+       <widget class="QWidget" name="linearreg_tab">
+        <attribute name="title">
+         <string>Linear</string>
+        </attribute>
+       </widget>
+       <widget class="QWidget" name="polyreg_tab">
+        <attribute name="title">
+         <string>Polynomial</string>
+        </attribute>
+       </widget>
+       <widget class="QWidget" name="leastsqreg_tab">
+        <attribute name="title">
+         <string>Least Square</string>
+        </attribute>
+       </widget>
+       <widget class="QWidget" name="logisticreg_tab">
+        <attribute name="title">
+         <string>Logistic</string>
+        </attribute>
+       </widget>
+       <widget class="QWidget" name="gdreg_tab">
+        <attribute name="title">
+         <string>Gradient Descent</string>
+        </attribute>
+       </widget>
       </widget>
      </item>
     </layout>
    </widget>
   </widget>
-  <widget class="QWidget" name="tab_2">
+  <widget class="QWidget" name="classify_tab">
+   <attribute name="title">
+    <string>Classify</string>
+   </attribute>
+   <widget class="QWidget" name="horizontalWidget_3" native="true">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>0</y>
+      <width>981</width>
+      <height>51</height>
+     </rect>
+    </property>
+    <layout class="QHBoxLayout" name="horizontalLayout_5">
+     <item>
+      <widget class="QTabWidget" name="classifymethods_tab">
+       <property name="currentIndex">
+        <number>0</number>
+       </property>
+       <property name="elideMode">
+        <enum>Qt::ElideNone</enum>
+       </property>
+       <widget class="QWidget" name="dt_tab">
+        <attribute name="title">
+         <string>Decision Tree</string>
+        </attribute>
+       </widget>
+       <widget class="QWidget" name="ensemble_tab">
+        <attribute name="title">
+         <string>Ensemble</string>
+        </attribute>
+       </widget>
+       <widget class="QWidget" name="nn_tab">
+        <attribute name="title">
+         <string>Neural Networks</string>
+        </attribute>
+       </widget>
+       <widget class="QWidget" name="svm_tab">
+        <attribute name="title">
+         <string>SVM</string>
+        </attribute>
+       </widget>
+       <widget class="QWidget" name="bn_tab">
+        <attribute name="title">
+         <string>Bayes Nets</string>
+        </attribute>
+       </widget>
+       <widget class="QWidget" name="knn_tab">
+        <attribute name="title">
+         <string>kNN</string>
+        </attribute>
+       </widget>
+       <widget class="QWidget" name="otherclassify_tab">
+        <attribute name="title">
+         <string>Others</string>
+        </attribute>
+       </widget>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+  </widget>
+  <widget class="QWidget" name="cluster_tab">
    <attribute name="title">
     <string>Cluster</string>
    </attribute>
@@ -369,57 +359,54 @@
      <rect>
       <x>0</x>
       <y>0</y>
-      <width>841</width>
+      <width>981</width>
       <height>51</height>
      </rect>
     </property>
-    <layout class="QHBoxLayout" name="horizontalLayout_5">
+    <layout class="QHBoxLayout" name="horizontalLayout_7">
      <item>
-      <widget class="QPushButton" name="pushButton_15">
-       <property name="text">
-        <string>kMeans</string>
+      <widget class="QTabWidget" name="clustermethod_tab">
+       <property name="currentIndex">
+        <number>0</number>
        </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="pushButton_16">
-       <property name="text">
-        <string>EM</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="pushButton_17">
-       <property name="text">
-        <string>Affinity Propogation</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="pushButton_30">
-       <property name="text">
-        <string>Spectral</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="pushButton_31">
-       <property name="text">
-        <string>Agglomerative</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="pushButton_32">
-       <property name="text">
-        <string>DBSCAN</string>
-       </property>
+       <widget class="QWidget" name="kmeans_tab">
+        <attribute name="title">
+         <string>kMeans</string>
+        </attribute>
+       </widget>
+       <widget class="QWidget" name="em_tab">
+        <attribute name="title">
+         <string>EM</string>
+        </attribute>
+       </widget>
+       <widget class="QWidget" name="propcluster_tab">
+        <attribute name="title">
+         <string>Affinity Propogation</string>
+        </attribute>
+       </widget>
+       <widget class="QWidget" name="spectralcluster_tab">
+        <attribute name="title">
+         <string>Spectral</string>
+        </attribute>
+       </widget>
+       <widget class="QWidget" name="aggcluster_tab">
+        <attribute name="title">
+         <string>Agglomerative</string>
+        </attribute>
+       </widget>
+       <widget class="QWidget" name="dbscan_tab">
+        <attribute name="title">
+         <string>DBSCAN</string>
+        </attribute>
+       </widget>
       </widget>
      </item>
     </layout>
    </widget>
+   <zorder>horizontalWidget_5</zorder>
+   <zorder>clustermethod_tab</zorder>
   </widget>
-  <widget class="QWidget" name="tab_3">
+  <widget class="QWidget" name="reduce_tab">
    <attribute name="title">
     <string>Reduce</string>
    </attribute>
@@ -428,41 +415,42 @@
      <rect>
       <x>0</x>
       <y>0</y>
-      <width>501</width>
+      <width>981</width>
       <height>51</height>
      </rect>
     </property>
-    <layout class="QHBoxLayout" name="horizontalLayout_6">
+    <layout class="QHBoxLayout" name="horizontalLayout_8">
      <item>
-      <widget class="QPushButton" name="pushButton_18">
-       <property name="text">
-        <string>PCA</string>
+      <widget class="QTabWidget" name="reducemethods_tab">
+       <property name="currentIndex">
+        <number>0</number>
        </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="pushButton_19">
-       <property name="text">
-        <string>ICA</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="pushButton_20">
-       <property name="text">
-        <string>Random Projection</string>
-       </property>
+       <widget class="QWidget" name="pca_tab">
+        <attribute name="title">
+         <string>PCA</string>
+        </attribute>
+       </widget>
+       <widget class="QWidget" name="ica_tab">
+        <attribute name="title">
+         <string>ICA</string>
+        </attribute>
+       </widget>
+       <widget class="QWidget" name="rpa_tab">
+        <attribute name="title">
+         <string>Random Projection</string>
+        </attribute>
+       </widget>
       </widget>
      </item>
     </layout>
    </widget>
   </widget>
-  <widget class="QWidget" name="tab_5">
+  <widget class="QWidget" name="visualize_tab">
    <attribute name="title">
     <string>Visualize</string>
    </attribute>
   </widget>
-  <widget class="QWidget" name="tab_4">
+  <widget class="QWidget" name="other_tab">
    <attribute name="title">
     <string>Other</string>
    </attribute>
