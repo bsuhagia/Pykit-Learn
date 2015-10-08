@@ -5,3 +5,15 @@ To run all tests, install the **nose** Python module, and enter the following co
 ```
 nosetests
 ```
+
+## Todo List
+- [ ] Load dataset files (categorical/numeric data)
+  - [x] .arff
+  - [ ] .csv
+  - [ ] .json
+- [ ] Preprocessing data
+  - [ ] Standardization
+  - [ ] Scale features to a range
+  - [ ] Normalization of training examples
+  - [ ] Feature Binarization
+  - [ ] Remove examples with '?' missing values
