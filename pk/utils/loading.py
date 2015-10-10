@@ -1,18 +1,24 @@
-# Author: Sean Dai
+""" This module provides loading utilities for data set files with extensions .csv, .arff, .json.
+    Author: Sean Dai
+    """
 import numpy as np
-import pandas as pd
 
 from sklearn.feature_extraction import DictVectorizer
 from scipy.io.arff import loadarff
 
+
 def _load_arff(filename):
-    dataset = loadarff(open(filename,'r'))
+    """
+    Base function to load arff files.
+    """
+    dataset = loadarff(open(filename, 'r'))
     features = dataset[1].names()
     class_attr = features[-1]
     y = np.array(dataset[0][class_attr])
     X = np.array(dataset[0][features[:-1]])
-    X = np.array(map(list, X))
+    X = np.array([list(fv) for fv in X])
     return X, y, features
+
 
 def is_numeric_type(array):
     """
@@ -25,20 +31,21 @@ def is_numeric_type(array):
         True if array.dtype is type float, int, uint, complex, or bool
         Otherwise, we say it's a string.
     """
-    numeric_dtypes = [np.bool_]
-    numeric_strings = set(['uint', 'complex', 'float', 'int'])
+    numeric_dtypes = []
+    numeric_strings = {'uint', 'complex', 'float', 'int'}
     for dtype, entries in np.sctypes.items():
         if dtype in numeric_strings:
             numeric_dtypes.extend(entries)
     return array.dtype.type in numeric_dtypes
+
 
 def vectorize_categorical_data(X, y, features):
     """
     One-hot encoding for categorical attributes in the feature array.
 
     Args:
-        X: (num_examples * num_features) numpy array of all the examples
-        y: the class labels of size (1 * num_examples)
+        X: (num_examples, num_features) numpy array of all the examples
+        y: the class labels of size (1, num_examples)
         features: list of feature names
 
     Returns:
@@ -48,12 +55,10 @@ def vectorize_categorical_data(X, y, features):
     vec = DictVectorizer()
     assert (len(features) - 1) == len(X[0])
 
-    """
-    Create a dictionary for each example with the feature name as the key.
-    DictVectorizer requires feature arrays to be represented as a list
-    of dict objects. Each element of the list is 1 feature vector example from
-    the dataset.
-    """
+    # Create a dictionary for each example with the feature name as the key.
+    # DictVectorizer requires feature arrays to be represented as a list
+    # of dict objects. Each element of the list is 1 feature vector example from
+    # the dataset.
     measurements = []
     for ex in X:
         ex_dict = dict(zip(features, ex.tolist()))
@@ -74,20 +79,24 @@ def _convert_dict_values_to_num(examples):
 
     examples - list<dict>
     """
+
     def is_number(s):
+        """ True if string s can be converted to a number type.
+        """
         try:
             float(s)
             return True
-        except ValueError as e:
+        except ValueError:
             return False
 
     new_examples = examples[:]
-    for dt in new_examples:
-        for key in dt:
-            value = dt[key]
+    for dct in new_examples:
+        for key in dct:
+            value = dct[key]
             if is_number(value):
-                dt[key] = float(value)
+                dct[key] = float(value)
     return new_examples
+
 
 def _convert_target_to_num(target):
     """
@@ -99,17 +108,21 @@ def _convert_target_to_num(target):
     Returns:
         converted target array to float dtype
     """
+
     def is_number(s):
+        """ True if string s can be converted to a number type.
+        """
         try:
             float(s)
             return True
-        except ValueError as e:
+        except ValueError:
             return False
 
     if all(map(is_number, target)):
         return target.astype(float)
     else:
         return target
+
 
 def load_arff(filename):
     """
@@ -119,7 +132,7 @@ def load_arff(filename):
         filename: str
 
     Returns:
-        X : a (num_examples * num_features) numpy array of examples X
+        X : a (num_examples, num_features) numpy array of examples X
         y : the class labels y of size (1, num_examples)
         features : name of each feature (list<str>)
     """
