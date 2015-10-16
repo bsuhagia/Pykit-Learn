@@ -124,7 +124,7 @@ def _convert_target_to_num(target):
         return target
 
 
-def load_arff(filename):
+def load_arff(filename, vectorizeData=False):
     """
     Loads .arff dataset files.
 
@@ -141,7 +141,7 @@ def load_arff(filename):
     # For categorical data, we want the feature label names
     # in order to create a 1-hot encoding of the categorical
     # values in our feature array of examples.
-    if not is_numeric_type(X):
+    if not is_numeric_type(X) and vectorizeData:
         return vectorize_categorical_data(X, y, features)
     else:
         return X, y

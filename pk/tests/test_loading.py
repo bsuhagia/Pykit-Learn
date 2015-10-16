@@ -72,9 +72,15 @@ def test_vectorize_bool_only():
     assert_array_equal(X2, exp_vec_X)
     assert_array_equal(y2, exp_vec_y)
 
+def test_load_categorical_no_vectorize():
+    X, y = load_arff(__DIR_NAME + "credit-g.arff", vectorizeData=False)
+    correct_list = ["'<0'", '6.0', "'critical/other existing credit'", 'radio/tv', '1169.0',
+                    "'no known savings'", "'>=7'", '4.0', "'male single'", 'none', '4.0',
+                    "'real estate'", '67.0', 'none' ,'own' ,'2.0', 'skilled', '1.0', 'yes', 'yes']
+    assert_array_equal(X[0], correct_list)
 
-
-    # test_load_arff()
-    # test_load_arff_categorical()
-    # test_vectorize()
-    # test_vectorize_numeric()
+# test_load_arff()
+# test_load_arff_categorical()
+# test_vectorize()
+# test_vectorize_numeric()
+# test_load_categorical_no_vectorize()
