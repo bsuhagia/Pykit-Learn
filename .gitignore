@@ -59,4 +59,8 @@ target/
 # IntelliJ Files
 .idea/
 
+# IPython Checkpoints
+pk/.ipynb_checkpoints/
+*.ipynb
+
 

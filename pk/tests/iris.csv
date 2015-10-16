@@ -1,0 +1,4 @@
+"Sepal.Length","Sepal.Width","Petal.Length","Petal.Width","Species"
+5.8,4,1.2,0.2,"setosa"
+5.9,3,4.2,1.5,"versicolor"
+6.5,3.2,5.1,2,"virginica"

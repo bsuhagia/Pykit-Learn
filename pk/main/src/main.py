@@ -327,7 +327,7 @@ class Ui_TabWidget(QtGui.QTabWidget):
             g = sns.PairGrid(dataset)
             g.map(plt.scatter)
             self.datainfotext.setText(str(dataset.describe))
-            # plt.show()   --> uncomment this to show plot in the new window
+            plt.show()  # --> uncomment this to show plot in the new window
         else:
             print 'File does not exist'
 

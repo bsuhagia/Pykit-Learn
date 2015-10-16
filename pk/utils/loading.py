@@ -1,7 +1,10 @@
 """ This module provides loading utilities for data set files with extensions .csv, .arff, .json.
     Author: Sean Dai
     """
+from __future__ import print_function
 import numpy as np
+import pandas as pd
+
 
 from sklearn.feature_extraction import DictVectorizer
 from scipy.io.arff import loadarff
@@ -124,7 +127,7 @@ def _convert_target_to_num(target):
         return target
 
 
-def load_arff(filename, vectorizeData=False):
+def load_arff(filename, vectorize_data=False, is_supervised=True):
     """
     Loads .arff dataset files.
 
@@ -141,7 +144,70 @@ def load_arff(filename, vectorizeData=False):
     # For categorical data, we want the feature label names
     # in order to create a 1-hot encoding of the categorical
     # values in our feature array of examples.
-    if not is_numeric_type(X) and vectorizeData:
+    if not is_numeric_type(X) and vectorize_data:
         return vectorize_categorical_data(X, y, features)
     else:
         return X, y
+
+def load_csv(filename, vectorize_data=False):
+    """
+    Loads csv dataset files.
+
+    Args:
+        filename: str
+
+    Returns:
+        X : a (num_examples, num_features) numpy array of examples X
+        y : the class labels y of size (1, num_examples)
+    """
+    try:
+        dataset = pd.read_csv(filename, sep=',')
+        dd = dataset.ix[:, -1]
+        y = np.array(dd.tolist()).T
+        column_names = dataset.dtypes.index
+        X = np.array(dataset[column_names[:-1]])
+
+        if is_numeric_type(X):
+            X = X.astype(float)
+        if is_numeric_type(y):
+            y = y.astype(float)
+
+        # Change categorical attributes to 1-hot numerical encoding
+        if vectorize_data:
+            X, y = vectorize_categorical_data(X, y, column_names)
+        return X, y
+    except OSError:
+        print('File does not exist')
+
+def load_excel(filename, vectorize_data=False):
+    """
+    Loads .excel dataset files.
+
+    Args:
+        filename: str
+
+    Returns:
+        X : a (num_examples, num_features) numpy array of examples X
+        y : the class labels y of size (1, num_examples)
+    """
+    try:
+        xl = pd.ExcelFile(filename)
+        sheets = xl.sheet_names
+        data = xl.parse(sheets[0])
+        last_col = data.ix[:, -1]
+        # Assumes last column contains class value
+        y = np.array(last_col.tolist()).T
+        column_names = data.dtypes.index
+        X = np.array(data[column_names[:-1]])
+
+        if is_numeric_type(X):
+            X = X.astype(float)
+        if is_numeric_type(y):
+            y = y.astype(float)
+
+        # Change categorical attributes to 1-hot numerical encoding
+        if vectorize_data:
+            X, y = vectorize_categorical_data(X, y, column_names)
+        return X, y
+    except OSError:
+        print('File does not exist')

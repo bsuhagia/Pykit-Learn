@@ -5,6 +5,7 @@ import os
 
 from numpy.testing import assert_array_equal
 from nose.tools import assert_true
+from numpy.testing import assert_array_almost_equal
 
 from pk.utils.loading import *
 
@@ -73,14 +74,47 @@ def test_vectorize_bool_only():
     assert_array_equal(y2, exp_vec_y)
 
 def test_load_categorical_no_vectorize():
-    X, y = load_arff(__DIR_NAME + "credit-g.arff", vectorizeData=False)
+    X, y = load_arff(__DIR_NAME + "credit-g.arff", vectorize_data=False)
     correct_list = ["'<0'", '6.0', "'critical/other existing credit'", 'radio/tv', '1169.0',
                     "'no known savings'", "'>=7'", '4.0', "'male single'", 'none', '4.0',
                     "'real estate'", '67.0', 'none' ,'own' ,'2.0', 'skilled', '1.0', 'yes', 'yes']
     assert_array_equal(X[0], correct_list)
+
+def test_load_csv():
+    filename = __DIR_NAME + 'iris.csv'
+    X, y = load_csv(filename)
+    expX = [[5.8,4,1.2,0.2],
+            [5.9,3,4.2,1.5],
+            [6.5,3.2,5.1,2]]
+    expY = ['setosa', 'versicolor', 'virginica']
+    assert_array_equal(X, expX)
+    assert_array_equal(y, expY)
+
+def test_load_excel():
+    filename = __DIR_NAME + 'Wine.xls'
+    X, y = load_excel(filename)
+    expX = np.array([[ 1.42300000e+01,   1.71000000e+00,   2.43000000e+00,
+                       1.56000000e+01,   1.27000000e+02,   2.80000000e+00,
+                       3.06000000e+00,   2.80000000e-01,   2.29000000e+00,
+                       5.64000000e+00,   1.04000000e+00,   3.92000000e+00,
+                       1.06500000e+03],
+                    [  1.23700000e+01,   9.40000000e-01,   1.36000000e+00,
+                       1.06000000e+01,   8.80000000e+01,   1.98000000e+00,
+                       5.70000000e-01,   2.80000000e-01,   4.20000000e-01,
+                       1.95000000e+00,   1.05000000e+00,   1.82000000e+00,
+                       5.20000000e+02],
+                    [  1.28600000e+01,   1.35000000e+00,   2.32000000e+00,
+                       1.80000000e+01,   1.22000000e+02,   1.51000000e+00,
+                       1.25000000e+00,   2.10000000e-01,   9.40000000e-01,
+                       4.10000000e+00,   7.60000000e-01,   1.29000000e+00,
+                       6.30000000e+02]])
+    expY = ['A', 'B', 'C']
+    assert_array_almost_equal(X, expX)
+    assert_array_equal(y, expY)
 
 # test_load_arff()
 # test_load_arff_categorical()
 # test_vectorize()
 # test_vectorize_numeric()
 # test_load_categorical_no_vectorize()
+# test_load_excel()
