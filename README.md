@@ -9,8 +9,8 @@ nosetests
 ## Todo List
 - [ ] Load dataset files (categorical/numeric data)
   - [x] .arff
-  - [ ] .csv
-  - [ ] .json
+  - [x] .csv
+  - [x] .xls/.xlsx
 - [ ] Preprocessing data
   - [ ] Standardization
   - [ ] Scale features to a range
