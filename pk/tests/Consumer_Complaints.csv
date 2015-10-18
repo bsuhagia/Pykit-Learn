@@ -1,8 +1,0 @@
-Complaint ID,Product,Sub-product,Issue,Sub-issue,State,ZIP code,Submitted via,Date received,Date sent to company,Company,Company response,Timely response?,Consumer disputed?
-1431865,Consumer loan,Vehicle loan,Managing the loan or lease,,NJ,08736,Web,06/22/2015,06/22/2015,Nissan Motor Acceptance Corporation,In progress,Yes
-1431374,Debt collection,Medical,Disclosure verification of debt,Not given enough info to verify debt,WI,54140,Web,06/22/2015,06/22/2015,"RSI Enterprises, Inc.",Closed with explanation,Yes
-1431251,Mortgage,Conventional fixed mortgage,"Loan modification,collection,foreclosure",,MO,63368,Web,06/22/2015,06/22/2015,Flagstar Bank,In progress,Yes
-1431743,Debt collection,Medical,Cont'd attempts collect debt not owed,Debt is not mine,WA,98055,Web,06/22/2015,06/22/2015,"P.S.C., Inc",Closed with explanation,Yes,Yes
-1432678,Debt collection,Medical,Cont'd attempts collect debt not owed,Debt was paid,TX,75104,Web,06/22/2015,06/22/2015,"ProCollect, Inc",Closed with explanation,Yes
-1432104,Debt collection,"Other (phone, health club, etc.)",Cont'd attempts collect debt not owed,Debt was paid,CA,95423,Web,06/22/2015,06/22/2015,"Associated Credit Services, Inc.",In progress,Yes
-1431998,Debt collection,"Other (phone, health club, etc.)",Communication tactics,Frequent or repeated calls,TX,75048,Web,06/22/2015,06/22/2015,"EOS Holdings, Inc.",Closed with explanation,Yes
