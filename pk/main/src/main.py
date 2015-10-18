@@ -1,7 +1,7 @@
 from PyQt4 import QtCore, QtGui
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
-from  pk.main.ui.main_gui import Ui_main_tab
+from pk.main.ui.main_gui import Ui_main_tab
 import sys
 from pk.utils.loading import *
 
@@ -39,7 +39,7 @@ def openfile():
 def main():
     app = QtGui.QApplication(sys.argv)
     ex = MainWindow()
-    # ex.openfile_btn.clicked.connect(openfile)
+    ex.openfile_btn.clicked.connect(openfile)
     ex.show()
     sys.exit(app.exec_())
 
