@@ -7,6 +7,7 @@ import pandas as pd
 
 
 from sklearn.feature_extraction import DictVectorizer
+from sklearn.datasets import make_blobs
 from scipy.io.arff import loadarff
 
 
@@ -211,3 +212,19 @@ def load_excel(filename, vectorize_data=False):
         return X, y
     except OSError:
         print('File does not exist')
+
+def generate_random_points(n_samples=100, n_features=2, centers=3):
+    """
+    Generate a random dataset consisting of Gaussian blobs.
+
+    Args:
+        n_samples: samples to have
+        n_features: num of features per sample
+        n_centers: number of clusters (or classes)
+
+    Returns:
+        X: feature array size (n_samples, n_features)
+        y: target array that corresponds each example to a cluster
+            with size (n_samples, 1).
+    """
+    return make_blobs(n_samples=n_samples, n_features=n_features, centers=centers)
