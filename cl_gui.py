@@ -5,6 +5,7 @@ import sys
 import os
 import cPickle
 import numpy as np
+import traceback
 
 from optparse import OptionParser
 from collections import Counter
@@ -13,6 +14,7 @@ from pk.utils.preprocess_utils import *
 
 class Status(object):
     DATASET_LOADED = False
+    FILENAME = None
 
 class InvalidCommandException(Exception):
     def __init__(self, message, errors=[]):
@@ -34,6 +36,7 @@ def load_file(filename):
     X, y = _load_file(filename)
     pickle_files(*[(X, 'load_X.pkl'), (y, 'load_y.pkl')])
     Status.DATASET_LOADED = True
+    Status.FILENAME = filename
     print 'Feature Array:\n %s' % X
     print 'Target classifications:\n %s' % y
 
@@ -50,14 +53,26 @@ def pickle_files(*args):
 def visualize_dataset():
     if Status.DATASET_LOADED:
         X, y = cPickle.load(open('_temp/load_X.pkl', 'r')), cPickle.load(open('_temp/load_y.pkl', 'r'))
-        classes = np.unique(y)
-        target_counts = Counter(y)
-        import matplotlib.pyplot as plt
-        plt.bar(np.arange(classes), y)
-        plt.xticks(classes)
-        plt.show()
+        plot_class_frequency_bar(y)
     else:
         raise Exception("Can't visualize an unloaded dataset!")
+
+def plot_class_frequency_bar(target, bar_width=.35):
+    # Get the frequency of each class label
+    classes = np.unique(target)
+    target_counts = Counter(target)
+
+    # Plot the bar chart of class frequencies
+    import matplotlib.pyplot as plt
+    fig, ax = plt.subplots()
+    ind = np.arange(len(classes))
+    ax.set_xticks(ind)
+    rects = ax.bar(ind, target_counts.values(), width=bar_width, align='center')
+    ax.set_title(Status.FILENAME)
+    ax.set_ylabel('Frequency')
+
+    ax.set_xticklabels(target_counts.keys())
+    plt.show()
 
 def process(line):
     tokens = tuple(line.split(' '))
@@ -89,7 +104,7 @@ def main():
         except InvalidCommandException as inv:
             print inv.message
         except Exception as e:
-            print e.message
+            traceback.print_exc()
         except KeyboardInterrupt:
             shutil.rmtree("_temp")
             sys.exit(1)
