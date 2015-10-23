@@ -41,7 +41,7 @@ nosetests
 - [ ] Unsupervised Learning
   - [ ] Gaussian Mixture Models
     - [ ] GMM
-    - [r ] DPGMM
+    - [ ] DPGMM
   - [ ] Manifold Learning
   - [ ] Clustering
     - [ ] K-means

@@ -138,17 +138,18 @@ def load_arff(filename, vectorize_data=False, is_supervised=True):
     Returns:
         X : a (num_examples, num_features) numpy array of examples X
         y : the class labels y of size (1, num_examples)
-        features : name of each feature (list<str>)
+        data: DataFrame object of features concatenated with target values
     """
     X, y, features = _load_arff(filename)
+    df = pd.DataFrame(np.hstack((X,y[:, np.newaxis])))
 
     # For categorical data, we want the feature label names
     # in order to create a 1-hot encoding of the categorical
     # values in our feature array of examples.
     if not is_numeric_type(X) and vectorize_data:
-        return vectorize_categorical_data(X, y, features)
+        return vectorize_categorical_data(X, y, features), df
     else:
-        return X, y
+        return X, y, df
 
 def load_csv(filename, vectorize_data=False):
     """
@@ -160,6 +161,7 @@ def load_csv(filename, vectorize_data=False):
     Returns:
         X : a (num_examples, num_features) numpy array of examples X
         y : the class labels y of size (1, num_examples)
+        dataset: DataFrame object for dataset file
     """
     try:
         dataset = pd.read_csv(filename, sep=',')
@@ -176,7 +178,7 @@ def load_csv(filename, vectorize_data=False):
         # Change categorical attributes to 1-hot numerical encoding
         if vectorize_data:
             X, y = vectorize_categorical_data(X, y, column_names)
-        return X, y
+        return X, y, dataset
     except OSError:
         print('File does not exist')
 
@@ -190,6 +192,7 @@ def load_excel(filename, vectorize_data=False):
     Returns:
         X : a (num_examples, num_features) numpy array of examples X
         y : the class labels y of size (1, num_examples)
+        data: DataFrame object
     """
     try:
         xl = pd.ExcelFile(filename)
@@ -209,7 +212,7 @@ def load_excel(filename, vectorize_data=False):
         # Change categorical attributes to 1-hot numerical encoding
         if vectorize_data:
             X, y = vectorize_categorical_data(X, y, column_names)
-        return X, y
+        return X, y, data
     except OSError:
         print('File does not exist')
 
