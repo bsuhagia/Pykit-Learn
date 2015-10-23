@@ -17,7 +17,7 @@ class Status(object):
     FILENAME = None
 
 class InvalidCommandException(Exception):
-    def __init__(self, message, errors=[]):
+    def __init__(self, message, errors=None):
         super(InvalidCommandException, self).__init__(message)
         self.errors = errors
 
@@ -82,6 +82,8 @@ def process(line):
     elif command == 'visualize_dataset':
         print "Visualizing..."
         visualize_dataset()
+    elif command == 'quit':
+        quit_gui()
     else:
         raise InvalidCommandException("{} is not a recognized command.".format(command))
 
@@ -89,9 +91,17 @@ def setup():
     if not os.path.exists("_temp/"):
         os.mkdir("_temp/")
 
+def quit_gui():
+    shutil.rmtree("_temp")
+    sys.exit(1)
+
 def main():
     """
-    To run, type "python cl_gui.py"
+    To run, type "python cl_gui.py".
+
+    Commands:
+        load [path_to_dataset] - loads a dataset within the program
+        visualize_dataset - view a histogram of the currently loaded dataset
     """
     print "Welcome to the command-line version of Pykit-Learn!"
     setup()
@@ -106,7 +116,7 @@ def main():
         except Exception as e:
             traceback.print_exc()
         except KeyboardInterrupt:
-            shutil.rmtree("_temp")
-            sys.exit(1)
+            quit_gui()
+
 if __name__ == "__main__":
     main()

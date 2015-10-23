@@ -1,5 +1,6 @@
 import numpy as np
 from sklearn.preprocessing import scale
+from sklearn.preprocessing import normalize
 
 def standardize(X, axis=0, with_mean=True, with_std=True, copy=True):
     """
@@ -15,10 +16,22 @@ def standardize(X, axis=0, with_mean=True, with_std=True, copy=True):
     Returns:
         changed_X: mean-shifted X with unit variance
     """
-    return scale(X)
+    return scale(X, axis, with_mean, with_std, copy)
 
-def normalize():
-    pass
+def normalize_data(X, norm='l2', axis=1, copy=True):
+    """
+    Scale input vectors to unit norm.
+
+    Args:
+        X: numpy feature array with shape (n_samples, n_features)
+        norm: the norm to use
+        axis: axis along which to normalize
+        copy: if False, do inplace row normalization
+    Returns:
+        A normalized numpy array.
+    """
+    return normalize(X, norm, axis, copy)
+
 def binarize():
     pass
 def remove_incomplete_examples():

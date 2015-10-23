@@ -12,9 +12,9 @@ nosetests
   - [x] .csv
   - [x] .xls/.xlsx
 - [ ] Preprocessing data
-  - [ ] Standardization
+  - [x] Standardization
   - [ ] Scale features to a range
-  - [ ] Normalization of training examples
+  - [x] Normalization of training examples
   - [ ] Feature Binarization
   - [ ] Remove examples with '?' missing values
 - [ ] Supervised Learning
@@ -41,8 +41,7 @@ nosetests
 - [ ] Unsupervised Learning
   - [ ] Gaussian Mixture Models
     - [ ] GMM
-    - [ ] VBGMM
-    - [ ] DPGMM
+    - [r ] DPGMM
   - [ ] Manifold Learning
   - [ ] Clustering
     - [ ] K-means
@@ -78,3 +77,4 @@ nosetests
   - [ ] Kernel Approximation
 - [ ] Dataset Loading Utilities
   - [ ] Download data from mldata.org
+  - [x] Generate a random dataset w/ class labels
