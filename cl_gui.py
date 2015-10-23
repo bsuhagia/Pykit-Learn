@@ -34,7 +34,7 @@ class InvalidCommandException(Exception):
 def _load_file(filename):
         extension = filename[filename.rfind('.'):]
         if (extension == '.csv'):
-            return load_csv(filename)
+            return load_csv(filename, vectorize_data=True)
         elif (extension == '.arff'):
             return load_arff(filename)
         elif (extension == '.xls' or extension == '.xlsx'):
@@ -176,12 +176,13 @@ def dispatch_run(args):
             if X_test is not None and y_test is not None:
                 get_test_accuracy(clf, X_test, y_test)
             # Cross-validation score
-            elif p_args.cv:
+            if p_args.cv:
+                print ""
                 print "Cross Validation Scores:"
-                get_cv_accuracy(clf, X_train, y_train)
+                print ""
+                get_cv_accuracy(clf, X_train, y_train, cv=p_args.cv)
 
-            y_predicted = clf.predict(X_test)
-            cm = confusion_matrix(y_test, y_predicted)
+            cm = get_confusion_matrix(clf, X_test, y_test)
             plot_confusion_matrix(cm, y=np.unique(y))
 
 def get_train_accuracy(clf, X, y):
@@ -228,7 +229,7 @@ def train_decision_tree(X, y, criterion='gini',splitter='best', max_depth=None,
 def get_confusion_matrix(clf, X, true_y):
     predicted_y = clf.predict(X)
     matrix = confusion_matrix(true_y, predicted_y)
-    print 'Confusion Matrix is: ', matrix
+    print 'Confusion Matrix is: \n', matrix
     return matrix
 
 def plot_confusion_matrix(cm, y, title='Confusion matrix', cmap = plt.cm.Blues, continous_class = False):
@@ -243,7 +244,7 @@ def plot_confusion_matrix(cm, y, title='Confusion matrix', cmap = plt.cm.Blues, 
     plt.tight_layout()
     plt.ylabel('True label')
     plt.xlabel('Predicted label')
-    plt.show(block=False)
+    plt.show()
 
 def help_page():
     output_page = """
