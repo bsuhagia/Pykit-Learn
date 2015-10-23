@@ -7,17 +7,20 @@ import cPickle
 import numpy as np
 import traceback
 
-from optparse import OptionParser
+from argparse import ArgumentParser
 from collections import Counter
+from sklearn.tree import DecisionTreeClassifier
 from pk.utils.loading import *
 from pk.utils.preprocess_utils import *
 import pandas.tools.plotting as pp
 from pandas.tools.plotting  import radviz
 from pandas.tools.plotting import scatter_matrix
 from pandas.tools.plotting import andrews_curves
+from sklearn import cross_validation
+from sklearn.metrics import confusion_matrix
 import matplotlib.pyplot as plt
 import seaborn as sns
-
+import numpy as np
 class Status(object):
     DATASET_LOADED = False
     FILENAME = None
@@ -59,11 +62,18 @@ def pickle_files(*args):
         with open("_temp/" + filename, 'wb') as f:
             cPickle.dump(obj, f)
 
+def get_pickled_dataset():
+    """
+    Returns X, y, and data_frame pickled files.
+    """
+    X = cPickle.load(open('_temp/load_X.pkl', 'r'))
+    y = cPickle.load(open('_temp/load_y.pkl', 'r'))
+    data_frame = cPickle.load(open('_temp/df.pkl', 'r'))
+    return X, y, data_frame
+
 def visualize_dataset(command='', plot_all=False):
     if Status.DATASET_LOADED:
-        X = cPickle.load(open('_temp/load_X.pkl', 'r'))
-        y = cPickle.load(open('_temp/load_y.pkl', 'r'))
-        data_frame = cPickle.load(open('_temp/df.pkl', 'r'))
+        X, y, data_frame = get_pickled_dataset()
         class_name = data_frame.dtypes.index[-1]
 
         if command == 'class_frequency' or plot_all:
@@ -131,12 +141,66 @@ def process(line):
         visualize_dataset('scatter_matrix')
     elif command == 'visualize':
         visualize_dataset(plot_all=True)
+    elif command == 'run':
+        dispatch_run(args)
     elif command == 'help':
         print help_page()
     elif command == 'quit':
         quit_gui()
     else:
         raise InvalidCommandException("{} is not a recognized command.".format(command))
+
+def dispatch_run(args):
+    parser = ArgumentParser()
+    parser.add_argument('-A', dest='A', help='Select the ML algorithm to run.')
+    parser.add_argument('-test_ratio', type=float, dest='test_ratio', help="Split data into training and test sets.")
+    parser.add_argument('-cv', dest='cv', type=int, help='Run with cross-validation.')
+    p_args = parser.parse_args(args)
+
+    if p_args.A:
+        # Run a decision tree algorithm on data
+        if p_args.A.strip() == 'dt':
+            print "Running decision tree algorithm on dataset..."
+            X, y, _ = get_pickled_dataset()
+            X_train, y_train = X, y
+            X_test, y_test = X, y
+
+            if p_args.test_ratio:
+                X_train, X_test, y_train, y_test = cross_validation.train_test_split(
+                                                                    X, y, test_size=p_args.test_ratio, random_state=0)
+            # Train the Decision Tree classifier
+            clf = train_decision_tree(X_train, y_train)
+            get_train_accuracy(clf, X_train, y_train)
+
+            # Output metrics from train-test split
+            if X_test is not None and y_test is not None:
+                get_test_accuracy(clf, X_test, y_test)
+            # Cross-validation score
+            elif p_args.cv:
+                print "Cross Validation Scores:"
+                get_cv_accuracy(clf, X_train, y_train)
+
+            y_predicted = clf.predict(X_test)
+            cm = confusion_matrix(y_test, y_predicted)
+            plot_confusion_matrix(cm, y=np.unique(y))
+
+def get_train_accuracy(clf, X, y):
+    print 'Train accuracy is ', clf.score(X,y)*100, ' %'
+    return clf.score(X,y)
+
+def get_test_accuracy(clf, X, y):
+    print 'Test accuracy is ', clf.score(X, y)*100, ' %'
+    return clf.score(X, y)
+
+def get_cv_accuracy(clf, X, y, cv=10):
+    scores = cross_validation.cross_val_score(clf, X, y, cv=cv)
+    print 'Scores are : ', scores
+    avg = scores.mean()
+    print 'Average accuracy is : ', avg, ' (+/- ' , scores.std()*2, ')'
+    return scores, avg
+
+def benchmark(training_func):
+    pass
 
 def setup():
     if not os.path.exists("_temp/"):
@@ -145,6 +209,41 @@ def setup():
 def quit_gui():
     shutil.rmtree("_temp")
     sys.exit(1)
+
+def train_decision_tree(X, y, criterion='gini',splitter='best', max_depth=None,
+                        min_samples_split=2, min_samples_leaf=1,
+                        max_features=None, random_state=None, max_leaf_nodes=None, class_weight=None):
+    """
+    Builds a decision tree model
+
+    Returns:
+     clf: Fitted Decision tree classifier object
+    """
+    clf = DecisionTreeClassifier(criterion=criterion, splitter=splitter, max_depth=max_depth,
+                                 min_samples_split=min_samples_split, min_samples_leaf=min_samples_leaf,
+                                 max_features=max_features, random_state=random_state, max_leaf_nodes=max_leaf_nodes)
+    clf = clf.fit(X, y)
+    return clf
+
+def get_confusion_matrix(clf, X, true_y):
+    predicted_y = clf.predict(X)
+    matrix = confusion_matrix(true_y, predicted_y)
+    print 'Confusion Matrix is: ', matrix
+    return matrix
+
+def plot_confusion_matrix(cm, y, title='Confusion matrix', cmap = plt.cm.Blues, continous_class = False):
+    if continous_class == True:
+        return None
+    plt.imshow(cm, interpolation='nearest', cmap=cmap)
+    plt.title(title)
+    plt.colorbar()
+    tick_marks = np.arange(len(np.unique(y)))
+    plt.xticks(tick_marks, np.unique(y), rotation=45)
+    plt.yticks(tick_marks, np.unique(y))
+    plt.tight_layout()
+    plt.ylabel('True label')
+    plt.xlabel('Predicted label')
+    plt.show(block=False)
 
 def help_page():
     output_page = """
@@ -161,6 +260,9 @@ Commands:
     plot_matrix             Generate a matrix plot of feature-feature
                             relationships.
     plot_radial             Plot a radial chart of the dataset.
+    run -A [alg]            Runs the ML alg on the dataset.
+        -test_ratio [0-1]   User can specify the test-train ratio.
+        -cv [int]           Enables k-fold cross validation.
     visualize               Plots all possible visualizations for input data.
     help                    Provides a help screen of available commands.
     quit                    Quits the command line GUI.
