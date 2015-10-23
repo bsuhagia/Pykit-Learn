@@ -262,6 +262,9 @@ Commands:
                             relationships.
     plot_radial             Plot a radial chart of the dataset.
     run -A [alg]            Runs the ML alg on the dataset.
+                            Options for [alg]:
+                                dt (Decision Tree)
+                                Eg. "run -A dt -test_ratio .3 -cv 5"
         -test_ratio [0-1]   User can specify the test-train ratio.
         -cv [int]           Enables k-fold cross validation.
     visualize               Plots all possible visualizations for input data.
