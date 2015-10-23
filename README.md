@@ -13,7 +13,6 @@ nosetests
   - [x] .xls/.xlsx
 - [ ] Preprocessing data
   - [x] Standardization
-  - [ ] Scale features to a range
   - [x] Normalization of training examples
   - [ ] Feature Binarization
   - [ ] Remove examples with '?' missing values
@@ -22,7 +21,7 @@ nosetests
   - [ ] SVMs
   - [ ] Stochastic Gradient Descent
   - [ ] kNN
-  - [ ] Decision Trees
+  - [X] Decision Trees
   - [ ] Ensemble Methods
     - [ ] Bagging
     - [ ] Randomized Trees
@@ -56,13 +55,13 @@ nosetests
   - [ ] Novelty and Outlier Detection
   - [ ] Restricted Boltzmann Machines
 - [ ] Model Selection and Evaluation
-  - [ ] Cross Validation
+  - [X] Cross Validation
   - [ ] Grid Search
   - [ ] Prediction Metrics
     - [ ] Classification Metrics
       - [ ] ROC
-      - [ ] Accuracy Score
-      - [ ] Confusion Matrix
+      - [X] Accuracy Score
+      - [X] Confusion Matrix
     - [ ] Regression Metrics
       - [ ] MAE, MSE, R2
     - [ ] Clustering Metrics
