@@ -301,6 +301,10 @@ Commands:
     plot_matrix             Generate a matrix plot of feature-feature
                             relationships.
     plot_radial             Plot a radial chart of the dataset.
+    preprocess [flags]      Preprocesses a dataset. Flags are
+                                -std Standardize to mean 0 and variance 1
+                                -norm Normalize each feature to range [0,1]
+                                Eg. "preprocess -std"
     run -A [alg]            Runs the ML alg on the dataset.
                             Options for [alg]:
                                 dt (Decision Tree)

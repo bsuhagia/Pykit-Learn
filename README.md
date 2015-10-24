@@ -13,7 +13,6 @@ nosetests
   - [x] .xls/.xlsx
 - [ ] Preprocessing data
   - [x] Standardization
-  - [ ] Scale features to a range
   - [x] Normalization of training examples
   - [ ] Feature Binarization
   - [ ] Remove examples with '?' missing values
