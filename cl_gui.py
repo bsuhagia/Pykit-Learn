@@ -184,12 +184,14 @@ def dispatch_preprocess(args):
         update_feature_array(new_X)
 
 def dispatch_run(args):
+    # Build parser for "run" flags
     parser = ArgumentParser()
     parser.add_argument('-A', dest='A', help='Select the ML algorithm to run.')
     parser.add_argument('-test_ratio', type=float, dest='test_ratio', help="Split data into training and test sets.")
     parser.add_argument('-cv', dest='cv', type=int, help='Run with cross-validation.')
     p_args = parser.parse_args(args)
 
+    # Process the passed in arguments
     if p_args.A:
         # Run a decision tree algorithm on data
         if p_args.A.strip() == 'dt':
@@ -198,6 +200,7 @@ def dispatch_run(args):
             X_train, y_train = X, y
             X_test, y_test = X, y
 
+            # Split the original dataset to training & testing sets
             if p_args.test_ratio:
                 X_train, X_test, y_train, y_test = cross_validation.train_test_split(
                                                                     X, y, test_size=p_args.test_ratio, random_state=0)
@@ -208,13 +211,15 @@ def dispatch_run(args):
             # Output metrics from train-test split
             if X_test is not None and y_test is not None:
                 get_test_accuracy(clf, X_test, y_test)
-            # Cross-validation score
+
+            # Get cross-validation score(s)
             if p_args.cv:
                 print ""
                 print "Cross Validation Scores:"
                 print ""
                 get_cv_accuracy(clf, X_train, y_train, cv=p_args.cv)
 
+            # Plot the confusion matrix
             cm = get_confusion_matrix(clf, X_test, y_test)
             plot_confusion_matrix(cm, y=np.unique(y))
 
@@ -223,7 +228,7 @@ def train_decision_tree(X, y, criterion='gini',splitter='best', max_depth=None,
                         max_features=None, random_state=None,
                         max_leaf_nodes=None, class_weight=None):
     """
-    Builds a decision tree model
+    Builds a decision tree model.
 
     Returns:
      clf: Fitted Decision tree classifier object
@@ -288,6 +293,14 @@ def setup():
     import atexit
     import readline
 
+    histfile = os.path.join(os.environ['HOME'], '.pythonhistory')
+    try:
+        readline.read_history_file(histfile)
+    except IOError:
+        pass
+    atexit.register(readline.write_history_file, histfile)
+
+    # Tab completion for GUI commands
     def completer(text, state):
         commands = ['load', 'load_random', 'plot_andrews', 'plot_frequency',
                 'plot_matrix', 'plot_radial', 'preprocess', 'run',
@@ -297,22 +310,14 @@ def setup():
             return options[state]
         except IndexError:
             return None
-
-    # Tab completion for GUI commands
     readline.set_completer(completer)
+
+    # Bind tab completer to specific platforms
     if 'libedit' in readline.__doc__:
         readline.parse_and_bind("bind -e")
         readline.parse_and_bind("bind '\t' rl_complete")
     else:
         readline.parse_and_bind("tab: complete")
-
-    # history file
-    histfile = os.path.join(os.environ['HOME'], '.pythonhistory')
-    try:
-        readline.read_history_file(histfile)
-    except IOError:
-        pass
-    atexit.register(readline.write_history_file, histfile)
     del histfile, readline, rlcompleter
 
 def quit_gui():
@@ -355,6 +360,7 @@ def process(line):
     tokens = tuple(line.split(' '))
     command, args = tokens[0], tokens[1:]
 
+    # Select the appropriate function to call
     if command == 'load':
         load_file(*args)
     elif command == 'load_random':
