@@ -229,5 +229,7 @@ def generate_random_points(n_samples=100, n_features=2, centers=3):
         X: feature array size (n_samples, n_features)
         y: target array that corresponds each example to a cluster
             with size (n_samples, 1).
+        data_frame: DataFrame object
     """
-    return make_blobs(n_samples=n_samples, n_features=n_features, centers=centers)
+    X, y = make_blobs(n_samples=n_samples, n_features=n_features, centers=centers)
+    return X, y, pd.DataFrame(np.hstack((X,y[:, np.newaxis])))

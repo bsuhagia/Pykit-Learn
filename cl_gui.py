@@ -1,30 +1,33 @@
-# Author: Sean Dai
+""" This module contains an executable command-line version of the Pykit-Learn GUI.
+    Author: Sean Dai
+"""
 
+import cPickle
+import os
 import shutil
 import sys
-import os
-import cPickle
-import numpy as np
 import traceback
-
 from argparse import ArgumentParser
 from collections import Counter
-from sklearn.tree import DecisionTreeClassifier
-from pk.utils.loading import *
-from pk.utils.preprocess_utils import *
-import pandas.tools.plotting as pp
+
 from pandas.tools.plotting  import radviz
 from pandas.tools.plotting import scatter_matrix
 from pandas.tools.plotting import andrews_curves
 from sklearn import cross_validation
 from sklearn.metrics import confusion_matrix
+from sklearn.tree import DecisionTreeClassifier
 import matplotlib.pyplot as plt
 import seaborn as sns
 import numpy as np
+
+from pk.utils.loading import *
+from pk.utils.preprocess_utils import *
+
 class Status(object):
     DATASET_LOADED = False
-    FILENAME = None
+    FILENAME = ''
     EXTENSION = None
+    QUIT = 'user_quit'
 
 class InvalidCommandException(Exception):
     def __init__(self, message, errors=None):
@@ -43,8 +46,13 @@ def _load_file(filename):
             raise IOError('{} is not a valid filename!'.format(filename))
 
 def load_file(filename):
+    """
+    Function to load a dataset file.
+    """
     X, y, data_frame = _load_file(filename)
-    pickle_files(*[(X, 'load_X.pkl'), (y, 'load_y.pkl'), (data_frame, 'df.pkl')])
+    pickle_files([(X, 'load_X.pkl'), (y, 'load_y.pkl'), (data_frame, 'df.pkl')])
+
+    # Update appropriate status flags.
     Status.DATASET_LOADED = True
     Status.FILENAME = filename
     Status.EXTENSION = filename[filename.rfind('.')]
@@ -52,13 +60,26 @@ def load_file(filename):
     print 'Feature Array:\n %s' % X
     print 'Target classifications:\n %s' % y
 
-def pickle_files(*args):
+def load_random():
+    """
+    Generates a random dataset with 100 samples, 2 features, and 3 classes.
+    """
+    X, y, df = generate_random_points()
+    pickle_files([(X, 'load_X.pkl'), (y, 'load_y.pkl'), (df, 'df.pkl')])
+
+    # Update appropriate status flags.
+    Status.DATASET_LOADED = True
+
+    print 'Feature Array:\n %s' % X
+    print 'Target classifications:\n %s' % y
+
+def pickle_files(files_to_save):
     """
     Saves a list of files to _temp directory
 
     Input: List of tuples in form (obj, filename_to_save)
     """
-    for obj, filename in args:
+    for obj, filename in files_to_save:
         with open("_temp/" + filename, 'wb') as f:
             cPickle.dump(obj, f)
 
@@ -101,7 +122,7 @@ def visualize_dataset(command='', plot_all=False):
             plot_andrews(data_frame, class_name)
 
     else:
-        raise Exception("Can't visualize an unloaded dataset!")
+        raise InvalidCommandException("Can't visualize an unloaded dataset!")
 
 def plot_class_frequency_bar(target, bar_width=.35):
     # Get the frequency of each class label
@@ -141,7 +162,7 @@ def plot_scatter_matrix(data_frame):
 
 def dispatch_preprocess(args):
     if not Status.DATASET_LOADED:
-        raise Exception("Can't preprocess an unloaded dataset!")
+        raise InvalidCommandException("Can't preprocess an unloaded dataset!")
 
     parser = ArgumentParser()
     parser.add_argument('-std', dest='std', action='store_true', help='Standardize the feature array.')
@@ -161,34 +182,6 @@ def dispatch_preprocess(args):
         new_X = normalize_data(X)
         print new_X
         update_feature_array(new_X)
-
-def process(line):
-    tokens = tuple(line.split(' '))
-    command, args = tokens[0], tokens[1:]
-    if command == 'load':
-        load_file(*args)
-    elif command == 'preprocess':
-        dispatch_preprocess(args)
-    elif command == 'plot_frequency':
-        visualize_dataset('class_frequency')
-    elif command == 'plot_matrix':
-        visualize_dataset('feature_matrix')
-    elif command == 'plot_radial':
-        visualize_dataset('radial')
-    elif command == 'plot_andrews':
-        visualize_dataset('andrews')
-    elif command == 'plot_scatter_matrix':
-        visualize_dataset('scatter_matrix')
-    elif command == 'visualize':
-        visualize_dataset(plot_all=True)
-    elif command == 'run':
-        dispatch_run(args)
-    elif command == 'help':
-        print help_page()
-    elif command == 'quit':
-        quit_gui()
-    else:
-        raise InvalidCommandException("{} is not a recognized command.".format(command))
 
 def dispatch_run(args):
     parser = ArgumentParser()
@@ -225,44 +218,24 @@ def dispatch_run(args):
             cm = get_confusion_matrix(clf, X_test, y_test)
             plot_confusion_matrix(cm, y=np.unique(y))
 
-def get_train_accuracy(clf, X, y):
-    print 'Train accuracy is ', clf.score(X,y)*100, ' %'
-    return clf.score(X,y)
-
-def get_test_accuracy(clf, X, y):
-    print 'Test accuracy is ', clf.score(X, y)*100, ' %'
-    return clf.score(X, y)
-
-def get_cv_accuracy(clf, X, y, cv=10):
-    scores = cross_validation.cross_val_score(clf, X, y, cv=cv)
-    print 'Scores are : ', scores
-    avg = scores.mean()
-    print 'Average accuracy is : ', avg, ' (+/- ' , scores.std()*2, ')'
-    return scores, avg
-
-def benchmark(training_func):
-    pass
-
-def setup():
-    if not os.path.exists("_temp/"):
-        os.mkdir("_temp/")
-
-def quit_gui():
-    shutil.rmtree("_temp")
-    sys.exit(1)
-
 def train_decision_tree(X, y, criterion='gini',splitter='best', max_depth=None,
                         min_samples_split=2, min_samples_leaf=1,
-                        max_features=None, random_state=None, max_leaf_nodes=None, class_weight=None):
+                        max_features=None, random_state=None,
+                        max_leaf_nodes=None, class_weight=None):
     """
     Builds a decision tree model
 
     Returns:
      clf: Fitted Decision tree classifier object
     """
-    clf = DecisionTreeClassifier(criterion=criterion, splitter=splitter, max_depth=max_depth,
-                                 min_samples_split=min_samples_split, min_samples_leaf=min_samples_leaf,
-                                 max_features=max_features, random_state=random_state, max_leaf_nodes=max_leaf_nodes)
+    clf = DecisionTreeClassifier(criterion=criterion,
+                                 splitter=splitter,
+                                 max_depth=max_depth,
+                                 min_samples_split=min_samples_split,
+                                 min_samples_leaf=min_samples_leaf,
+                                 max_features=max_features,
+                                 random_state=random_state,
+                                 max_leaf_nodes=max_leaf_nodes)
     clf = clf.fit(X, y)
     return clf
 
@@ -286,6 +259,66 @@ def plot_confusion_matrix(cm, y, title='Confusion matrix', cmap = plt.cm.Blues, 
     plt.xlabel('Predicted label')
     plt.show()
 
+def get_train_accuracy(clf, X, y):
+    print 'Train accuracy is ', clf.score(X,y)*100, ' %'
+    return clf.score(X,y)
+
+def get_test_accuracy(clf, X, y):
+    print 'Test accuracy is ', clf.score(X, y)*100, ' %'
+    return clf.score(X, y)
+
+def get_cv_accuracy(clf, X, y, cv=10):
+    scores = cross_validation.cross_val_score(clf, X, y, cv=cv)
+    print 'Scores are : ', scores
+    avg = scores.mean()
+    print 'Average accuracy is : ', avg, ' (+/- ' , scores.std()*2, ')'
+    return scores, avg
+
+def benchmark(training_func):
+    pass
+
+def setup():
+    # Create temporary directory for storing serialized objects.
+    if not os.path.exists("_temp/"):
+        os.mkdir("_temp/")
+
+    # Code snippet for recalling previous commands with the
+    # 'up' and 'down' arrow keys.
+    import rlcompleter
+    import atexit
+    import readline
+
+    def completer(text, state):
+        commands = ['load', 'load_random', 'plot_andrews', 'plot_frequency',
+                'plot_matrix', 'plot_radial', 'preprocess', 'run',
+                'visualize', 'help', 'quit']
+        options = [i for i in commands if i.startswith(text)]
+        try:
+            return options[state]
+        except IndexError:
+            return None
+
+    # Tab completion for GUI commands
+    readline.set_completer(completer)
+    if 'libedit' in readline.__doc__:
+        readline.parse_and_bind("bind -e")
+        readline.parse_and_bind("bind '\t' rl_complete")
+    else:
+        readline.parse_and_bind("tab: complete")
+
+    # history file
+    histfile = os.path.join(os.environ['HOME'], '.pythonhistory')
+    try:
+        readline.read_history_file(histfile)
+    except IOError:
+        pass
+    atexit.register(readline.write_history_file, histfile)
+    del histfile, readline, rlcompleter
+
+def quit_gui():
+    shutil.rmtree("_temp")
+    sys.exit(Status.QUIT)
+
 def help_page():
     output_page = """
 Pykit-Learn Command Line GUI
@@ -294,7 +327,7 @@ Commands:
     The following commands are available:
 
     load [file]             Loads the dataset at the path specified by [file].
-                            No quotes "" to file!
+                            No quotes "" around filename!
     plot_andrews            Plots an Andrews curve of the dataset.
 
     plot_frequency          View the frequency of each class label.
@@ -317,6 +350,40 @@ Commands:
     """
     return output_page
 
+
+def process(line):
+    tokens = tuple(line.split(' '))
+    command, args = tokens[0], tokens[1:]
+
+    if command == 'load':
+        load_file(*args)
+    elif command == 'load_random':
+        load_random()
+    elif command == 'preprocess':
+        dispatch_preprocess(args)
+    elif command == 'plot_frequency':
+        visualize_dataset('class_frequency')
+    elif command == 'plot_matrix':
+        visualize_dataset('feature_matrix')
+    elif command == 'plot_radial':
+        visualize_dataset('radial')
+    elif command == 'plot_andrews':
+        visualize_dataset('andrews')
+    elif command == 'plot_scatter_matrix':
+        visualize_dataset('scatter_matrix')
+    elif command == 'visualize':
+        visualize_dataset(plot_all=True)
+    elif command == 'run':
+        dispatch_run(args)
+    elif command == 'help':
+        print help_page()
+    elif command == 'quit':
+        quit_gui()
+    elif command == '':
+        return
+    else:
+        raise InvalidCommandException("{} is not a recognized command.".format(command))
+
 def main():
     """
     To run, type "python cl_gui.py".
@@ -336,7 +403,10 @@ def main():
         except Exception as e:
             traceback.print_exc()
         except SystemExit as se:
-            print se.message
+            if str(se.message) == Status.QUIT:
+                return
+            else:
+                print se.message
         except KeyboardInterrupt:
             quit_gui()
 
