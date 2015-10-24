@@ -27,7 +27,7 @@ class Status(object):
     DATASET_LOADED = False
     FILENAME = ''
     EXTENSION = None
-    QUIT = 'user_quit'
+    USER_QUIT = 'user_quit'
 
 class InvalidCommandException(Exception):
     def __init__(self, message, errors=None):
@@ -317,7 +317,7 @@ def setup():
 
 def quit_gui():
     shutil.rmtree("_temp")
-    sys.exit(Status.QUIT)
+    sys.exit(Status.USER_QUIT)
 
 def help_page():
     output_page = """
@@ -403,7 +403,7 @@ def main():
         except Exception as e:
             traceback.print_exc()
         except SystemExit as se:
-            if str(se.message) == Status.QUIT:
+            if str(se.message) == Status.USER_QUIT:
                 return
             else:
                 print se.message
