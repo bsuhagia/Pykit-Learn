@@ -66,10 +66,25 @@ def get_pickled_dataset():
     """
     Returns X, y, and data_frame pickled files.
     """
-    X = cPickle.load(open('_temp/load_X.pkl', 'r'))
-    y = cPickle.load(open('_temp/load_y.pkl', 'r'))
-    data_frame = cPickle.load(open('_temp/df.pkl', 'r'))
+    f1 = open('_temp/load_X.pkl', 'r')
+    f2 = open('_temp/load_y.pkl', 'r')
+    f3 = open('_temp/df.pkl', 'r')
+
+    X = cPickle.load(f1)
+    y = cPickle.load(f2)
+    data_frame = cPickle.load(f3)
+
+    f1.close()
+    f2.close()
+    f3.close()
     return X, y, data_frame
+
+def update_feature_array(changed_X):
+    with open('_temp/load_X.pkl', 'wb') as f:
+        cPickle.dump(changed_X, f)
+    with open('_temp/df.pkl', 'wb') as f:
+        cPickle.dump(pd.DataFrame(changed_X), f)
+
 
 def visualize_dataset(command='', plot_all=False):
     if Status.DATASET_LOADED:
@@ -124,11 +139,36 @@ def plot_scatter_matrix(data_frame):
     scatter_matrix(data_frame, alpha=0.2, figsize=(10,10), diagonal='kde')
     plt.show(block=False)
 
+def dispatch_preprocess(args):
+    if not Status.DATASET_LOADED:
+        raise Exception("Can't preprocess an unloaded dataset!")
+
+    parser = ArgumentParser()
+    parser.add_argument('-std', dest='std', action='store_true', help='Standardize the feature array.')
+    parser.add_argument('-norm', dest='norm', action='store_true', help="Normalize the values of each feature.")
+    p_args = parser.parse_args(args)
+    print p_args
+
+    if p_args.std:
+        print "Standardizing feature array..."
+        X, y, _ = get_pickled_dataset()
+        new_X = standardize(X)
+        print new_X
+        update_feature_array(new_X)
+    if p_args.norm:
+        print "Normalizing feature array..."
+        X, y, _ = get_pickled_dataset()
+        new_X = normalize_data(X)
+        print new_X
+        update_feature_array(new_X)
+
 def process(line):
     tokens = tuple(line.split(' '))
     command, args = tokens[0], tokens[1:]
     if command == 'load':
         load_file(*args)
+    elif command == 'preprocess':
+        dispatch_preprocess(args)
     elif command == 'plot_frequency':
         visualize_dataset('class_frequency')
     elif command == 'plot_matrix':
@@ -291,6 +331,8 @@ def main():
             print inv.message
         except Exception as e:
             traceback.print_exc()
+        except SystemExit as se:
+            print se.message
         except KeyboardInterrupt:
             quit_gui()
 
