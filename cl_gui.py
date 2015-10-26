@@ -5,24 +5,29 @@ GUI.
 
 import cPickle
 import logging
+import multiprocessing
 import os
 import shutil
 import sys
 import traceback
 from argparse import ArgumentParser
 from collections import Counter
+from glob import glob
 
 from pandas.tools.plotting import radviz
 from pandas.tools.plotting import scatter_matrix
 from pandas.tools.plotting import andrews_curves
+from prygress import progress
 from sklearn import cross_validation
 from sklearn.metrics import confusion_matrix
 from sklearn.tree import DecisionTreeClassifier
 import matplotlib.pyplot as plt
 import seaborn as sns
+from PIL import Image
 
 from pk.utils.loading import *
 from pk.utils.preprocess_utils import *
+from pk.utils.prygress import progress
 
 
 class Status(object):
@@ -30,6 +35,11 @@ class Status(object):
     FILENAME = ''
     EXTENSION = None
     USER_QUIT = 'user_quit'
+    RADIAL_NAME = '_temp/radial.png'
+    FREQ_NAME = '_temp/freq.png'
+    FM_NAME = '_temp/fm.png'
+    ANDREWS_NAME = '_temp/andrews.png'
+    FINISH_PLOTS = False
 
 
 class InvalidCommandException(Exception):
@@ -118,21 +128,38 @@ def update_feature_array(changed_X):
 
 def visualize_dataset(command='', plot_all=False):
     if Status.DATASET_LOADED:
-        X, y, data_frame = get_pickled_dataset()
-        class_name = data_frame.dtypes.index[-1]
-
-        if command == 'class_frequency' or plot_all:
-            plot_class_frequency_bar(y)
-        if command == 'feature_matrix':
-            plot_feature_matrix(data_frame)
-        if command == 'radial' or plot_all:
-            plot_radial(data_frame, class_name)
-        if command == 'andrews' or plot_all:
-            plot_andrews(data_frame, class_name)
-
+        print "Creating visualization(s)",
+        make_visualizations(command, plot_all)
+        print ""
+        print "Viewing generated plots..."
+        view_saved_plots()
     else:
         raise InvalidCommandException("Can't visualize an unloaded dataset!")
 
+def view_saved_plots():
+    for im_file in glob('_temp/*.png'):
+        im = Image.open(im_file, 'r')
+        im.show()
+
+@progress(char='.', pause=0.5)
+def make_visualizations(command='', plot_all=False):
+    """
+    Save the plots to _temp directory.
+    """
+    X, y, data_frame = get_pickled_dataset()
+    class_name = data_frame.dtypes.index[-1]
+
+    if command == 'class_frequency' or plot_all:
+        plot_class_frequency_bar(y)
+    if command == 'feature_matrix':
+        plot_feature_matrix(data_frame)
+    if command == 'radial' or plot_all:
+        plot_radial(data_frame, class_name)
+    if command == 'andrews' or plot_all:
+        plot_andrews(data_frame, class_name)
+
+def reset_plot_status():
+    Status.FINISH_PLOTS = False
 
 def plot_class_frequency_bar(target, bar_width=.35):
     # Get the frequency of each class label
@@ -148,27 +175,27 @@ def plot_class_frequency_bar(target, bar_width=.35):
     ax.set_ylabel('Frequency')
 
     ax.set_xticklabels(target_counts.keys())
-    fig.show()
+    plt.savefig(Status.FREQ_NAME)
 
 
 def plot_feature_matrix(data_frame):
     # Plot the matrix of feature-feature pairs
     g = sns.PairGrid(data_frame)
     g.map(plt.scatter)
-    plt.show(block=False)
-
+    # plt.show(block=False)
+    plt.savefig(Status.FM_NAME)
 
 def plot_radial(data_frame, class_name):
     plt.figure()
     radviz(data_frame, class_name)
-    plt.show(block=False)
-
+    # plt.show(block=False)
+    plt.savefig(Status.RADIAL_NAME)
 
 def plot_andrews(data_frame, class_name):
     plt.figure()
     andrews_curves(data_frame, class_name)
-    plt.show(block=False)
-
+    # plt.show(block=False)
+    plt.savefig(Status.ANDREWS_NAME)
 
 def plot_scatter_matrix(data_frame):
     scatter_matrix(data_frame, alpha=0.2, figsize=(10, 10), diagonal='kde')

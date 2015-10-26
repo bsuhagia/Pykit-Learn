@@ -14,3 +14,4 @@ def test_imports():
     import scipy
     import pandas
     import PyQt4
+    import PIL
