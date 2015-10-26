@@ -367,7 +367,7 @@ def setup():
     readline.set_completer(completer)
 
     # Bind tab completer to specific platforms
-    if 'libedit' in readline.__doc__:
+    if readline.__doc__ and 'libedit' in readline.__doc__:
         readline.parse_and_bind("bind -e")
         readline.parse_and_bind("bind '\t' rl_complete")
     else:
