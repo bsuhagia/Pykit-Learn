@@ -2,7 +2,7 @@
 
 def test_imports():
     """
-    Passes if all required modules are installed.
+    Required modules are installed.
     """
     import sklearn
     import statsmodels

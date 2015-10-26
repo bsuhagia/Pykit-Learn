@@ -1,8 +1,10 @@
-""" This module contains an executable command-line version of the Pykit-Learn GUI.
+""" This module contains an executable command-line version of the Pykit-Learn
+GUI.
     Author: Sean Dai
 """
 
 import cPickle
+import logging
 import os
 import shutil
 import sys
@@ -10,7 +12,7 @@ import traceback
 from argparse import ArgumentParser
 from collections import Counter
 
-from pandas.tools.plotting  import radviz
+from pandas.tools.plotting import radviz
 from pandas.tools.plotting import scatter_matrix
 from pandas.tools.plotting import andrews_curves
 from sklearn import cross_validation
@@ -18,10 +20,10 @@ from sklearn.metrics import confusion_matrix
 from sklearn.tree import DecisionTreeClassifier
 import matplotlib.pyplot as plt
 import seaborn as sns
-import numpy as np
 
 from pk.utils.loading import *
 from pk.utils.preprocess_utils import *
+
 
 class Status(object):
     DATASET_LOADED = False
@@ -29,21 +31,24 @@ class Status(object):
     EXTENSION = None
     USER_QUIT = 'user_quit'
 
+
 class InvalidCommandException(Exception):
     def __init__(self, message, errors=None):
         super(InvalidCommandException, self).__init__(message)
         self.errors = errors
 
+
 def _load_file(filename):
-        extension = filename[filename.rfind('.'):]
-        if (extension == '.csv'):
-            return load_csv(filename, vectorize_data=True)
-        elif (extension == '.arff'):
-            return load_arff(filename)
-        elif (extension == '.xls' or extension == '.xlsx'):
-            return load_excel(filename)
-        else:
-            raise IOError('{} is not a valid filename!'.format(filename))
+    extension = filename[filename.rfind('.'):]
+    if extension == '.csv':
+        return load_csv(filename, vectorize_data=True)
+    elif extension == '.arff':
+        return load_arff(filename)
+    elif extension == '.xls' or extension == '.xlsx':
+        return load_excel(filename)
+    else:
+        raise IOError('{} is not a valid filename!'.format(filename))
+
 
 def load_file(filename):
     """
@@ -60,6 +65,7 @@ def load_file(filename):
     print 'Feature Array:\n %s' % X
     print 'Target classifications:\n %s' % y
 
+
 def load_random():
     """
     Generates a random dataset with 100 samples, 2 features, and 3 classes.
@@ -73,6 +79,7 @@ def load_random():
     print 'Feature Array:\n %s' % X
     print 'Target classifications:\n %s' % y
 
+
 def pickle_files(files_to_save):
     """
     Saves a list of files to _temp directory
@@ -82,6 +89,7 @@ def pickle_files(files_to_save):
     for obj, filename in files_to_save:
         with open("_temp/" + filename, 'wb') as f:
             cPickle.dump(obj, f)
+
 
 def get_pickled_dataset():
     """
@@ -99,6 +107,7 @@ def get_pickled_dataset():
     f2.close()
     f3.close()
     return X, y, data_frame
+
 
 def update_feature_array(changed_X):
     with open('_temp/load_X.pkl', 'wb') as f:
@@ -124,6 +133,7 @@ def visualize_dataset(command='', plot_all=False):
     else:
         raise InvalidCommandException("Can't visualize an unloaded dataset!")
 
+
 def plot_class_frequency_bar(target, bar_width=.35):
     # Get the frequency of each class label
     classes = np.unique(target)
@@ -133,12 +143,13 @@ def plot_class_frequency_bar(target, bar_width=.35):
     fig, ax = plt.subplots()
     ind = np.arange(len(classes))
     ax.set_xticks(ind)
-    rects = ax.bar(ind, target_counts.values(), width=bar_width, align='center')
+    ax.bar(ind, target_counts.values(), width=bar_width, align='center')
     ax.set_title(Status.FILENAME)
     ax.set_ylabel('Frequency')
 
     ax.set_xticklabels(target_counts.keys())
     fig.show()
+
 
 def plot_feature_matrix(data_frame):
     # Plot the matrix of feature-feature pairs
@@ -146,27 +157,33 @@ def plot_feature_matrix(data_frame):
     g.map(plt.scatter)
     plt.show(block=False)
 
+
 def plot_radial(data_frame, class_name):
-    fig = plt.figure()
+    plt.figure()
     radviz(data_frame, class_name)
     plt.show(block=False)
 
+
 def plot_andrews(data_frame, class_name):
-    fig = plt.figure()
+    plt.figure()
     andrews_curves(data_frame, class_name)
     plt.show(block=False)
 
+
 def plot_scatter_matrix(data_frame):
-    scatter_matrix(data_frame, alpha=0.2, figsize=(10,10), diagonal='kde')
+    scatter_matrix(data_frame, alpha=0.2, figsize=(10, 10), diagonal='kde')
     plt.show(block=False)
+
 
 def dispatch_preprocess(args):
     if not Status.DATASET_LOADED:
         raise InvalidCommandException("Can't preprocess an unloaded dataset!")
 
     parser = ArgumentParser()
-    parser.add_argument('-std', dest='std', action='store_true', help='Standardize the feature array.')
-    parser.add_argument('-norm', dest='norm', action='store_true', help="Normalize the values of each feature.")
+    parser.add_argument('-std', dest='std', action='store_true',
+                        help='Standardize the feature array.')
+    parser.add_argument('-norm', dest='norm', action='store_true',
+                        help="Normalize the values of each feature.")
     p_args = parser.parse_args(args)
     print p_args
 
@@ -183,12 +200,15 @@ def dispatch_preprocess(args):
         print new_X
         update_feature_array(new_X)
 
+
 def dispatch_run(args):
     # Build parser for "run" flags
     parser = ArgumentParser()
     parser.add_argument('-A', dest='A', help='Select the ML algorithm to run.')
-    parser.add_argument('-test_ratio', type=float, dest='test_ratio', help="Split data into training and test sets.")
-    parser.add_argument('-cv', dest='cv', type=int, help='Run with cross-validation.')
+    parser.add_argument('-test_ratio', type=float, dest='test_ratio',
+                        help="Split data into training and test sets.")
+    parser.add_argument('-cv', dest='cv', type=int,
+                        help='Run with cross-validation.')
     p_args = parser.parse_args(args)
 
     # Process the passed in arguments
@@ -203,7 +223,8 @@ def dispatch_run(args):
             # Split the original dataset to training & testing sets
             if p_args.test_ratio:
                 X_train, X_test, y_train, y_test = cross_validation.train_test_split(
-                                                                    X, y, test_size=p_args.test_ratio, random_state=0)
+                    X, y, test_size=p_args.test_ratio,
+                    random_state=0)
             # Train the Decision Tree classifier
             clf = train_decision_tree(X_train, y_train)
             get_train_accuracy(clf, X_train, y_train)
@@ -216,17 +237,17 @@ def dispatch_run(args):
             if p_args.cv:
                 print ""
                 print "Cross Validation Scores:"
-                print ""
                 get_cv_accuracy(clf, X_train, y_train, cv=p_args.cv)
 
             # Plot the confusion matrix
             cm = get_confusion_matrix(clf, X_test, y_test)
             plot_confusion_matrix(cm, y=np.unique(y))
 
-def train_decision_tree(X, y, criterion='gini',splitter='best', max_depth=None,
+
+def train_decision_tree(X, y, criterion='gini', splitter='best', max_depth=None,
                         min_samples_split=2, min_samples_leaf=1,
                         max_features=None, random_state=None,
-                        max_leaf_nodes=None, class_weight=None):
+                        max_leaf_nodes=None):
     """
     Builds a decision tree model.
 
@@ -244,14 +265,17 @@ def train_decision_tree(X, y, criterion='gini',splitter='best', max_depth=None,
     clf = clf.fit(X, y)
     return clf
 
+
 def get_confusion_matrix(clf, X, true_y):
     predicted_y = clf.predict(X)
     matrix = confusion_matrix(true_y, predicted_y)
-    print 'Confusion Matrix is: \n', matrix
+    print 'Confusion Matrix is: \n%s' % matrix
     return matrix
 
-def plot_confusion_matrix(cm, y, title='Confusion matrix', cmap = plt.cm.Blues, continous_class = False):
-    if continous_class == True:
+
+def plot_confusion_matrix(cm, y, title='Confusion matrix', cmap=plt.cm.Blues,
+                          continuous_class=False):
+    if continuous_class:
         return None
     plt.imshow(cm, interpolation='nearest', cmap=cmap)
     plt.title(title)
@@ -262,30 +286,48 @@ def plot_confusion_matrix(cm, y, title='Confusion matrix', cmap = plt.cm.Blues, 
     plt.tight_layout()
     plt.ylabel('True label')
     plt.xlabel('Predicted label')
-    plt.show()
+    plt.show(block=False)
+
 
 def get_train_accuracy(clf, X, y):
-    print 'Train accuracy is ', clf.score(X,y)*100, ' %'
-    return clf.score(X,y)
+    print 'Train accuracy is %f%%' % (clf.score(X, y) * 100)
+    return clf.score(X, y)
+
 
 def get_test_accuracy(clf, X, y):
-    print 'Test accuracy is ', clf.score(X, y)*100, ' %'
+    print 'Test accuracy is %f%%' % (clf.score(X, y) * 100)
     return clf.score(X, y)
+
 
 def get_cv_accuracy(clf, X, y, cv=10):
     scores = cross_validation.cross_val_score(clf, X, y, cv=cv)
-    print 'Scores are : ', scores
+    print 'Scores: ' + ', '.join(map(str, scores))
     avg = scores.mean()
-    print 'Average accuracy is : ', avg, ' (+/- ' , scores.std()*2, ')'
+    print 'Average accuracy: %f (+/- %f)' % (avg, scores.std() * 2)
     return scores, avg
 
-def benchmark(training_func):
-    pass
+
+def benchmark(X, y, training_func, *args, **kwargs):
+    clf = training_func(X, y, *args, **kwargs)
+    get_train_accuracy(clf, X, y)
+    get_test_accuracy(clf, X, y)
+
 
 def setup():
     # Create temporary directory for storing serialized objects.
     if not os.path.exists("_temp/"):
         os.mkdir("_temp/")
+
+    # Configure log file for the application.
+    logging.basicConfig(level=logging.DEBUG,
+                        format='%(asctime)s %(levelname)s: %(message)s',
+                        filename='cl_gui.log')
+    logging.info("Starting application...")
+
+    # Ignore any warnings issued by third-party modules
+    import warnings
+
+    warnings.filterwarnings("ignore")
 
     # Code snippet for recalling previous commands with the
     # 'up' and 'down' arrow keys.
@@ -303,13 +345,14 @@ def setup():
     # Tab completion for GUI commands
     def completer(text, state):
         commands = ['load', 'load_random', 'plot_andrews', 'plot_frequency',
-                'plot_matrix', 'plot_radial', 'preprocess', 'run',
-                'visualize', 'help', 'quit']
+                    'plot_matrix', 'plot_radial', 'preprocess', 'run',
+                    'visualize', 'help', 'quit']
         options = [i for i in commands if i.startswith(text)]
         try:
             return options[state]
         except IndexError:
             return None
+
     readline.set_completer(completer)
 
     # Bind tab completer to specific platforms
@@ -318,11 +361,14 @@ def setup():
         readline.parse_and_bind("bind '\t' rl_complete")
     else:
         readline.parse_and_bind("tab: complete")
-    del histfile, readline, rlcompleter
+    del histfile, readline, rlcompleter, warnings
+
 
 def quit_gui():
     shutil.rmtree("_temp")
+    logging.info("Quitting application...")
     sys.exit(Status.USER_QUIT)
+
 
 def help_page():
     output_page = """
@@ -333,6 +379,7 @@ Commands:
 
     load [file]             Loads the dataset at the path specified by [file].
                             No quotes "" around filename!
+    load_random             Load a randomly generated dataset with 3 classes.
     plot_andrews            Plots an Andrews curve of the dataset.
 
     plot_frequency          View the frequency of each class label.
@@ -343,12 +390,12 @@ Commands:
                                 -std Standardize to mean 0 and variance 1
                                 -norm Normalize each feature to range [0,1]
                                 Eg. "preprocess -std"
-    run -A [alg]            Runs the ML alg on the dataset.
-                            Options for [alg]:
-                                dt (Decision Tree)
-                                Eg. "run -A dt -test_ratio .3 -cv 5"
+    run                     Runs the ML alg on the loaded dataset.
+        -A [alg]            REQUIRED flag! Options for [alg]:
+                                dt = (Decision Tree)
         -test_ratio [0-1]   User can specify the test-train ratio.
         -cv [int]           Enables k-fold cross validation.
+                            Example: "run -A dt -test_ratio .3 -cv 5"
     visualize               Plots all possible visualizations for input data.
     help                    Provides a help screen of available commands.
     quit                    Quits the command line GUI.
@@ -388,7 +435,9 @@ def process(line):
     elif command == '':
         return
     else:
-        raise InvalidCommandException("{} is not a recognized command.".format(command))
+        raise InvalidCommandException(
+            "{} is not a recognized command.".format(command))
+
 
 def main():
     """
@@ -406,7 +455,7 @@ def main():
             print ioe.message
         except InvalidCommandException as inv:
             print inv.message
-        except Exception as e:
+        except Exception:
             traceback.print_exc()
         except SystemExit as se:
             if str(se.message) == Status.USER_QUIT:
@@ -415,6 +464,7 @@ def main():
                 print se.message
         except KeyboardInterrupt:
             quit_gui()
+
 
 if __name__ == "__main__":
     main()
