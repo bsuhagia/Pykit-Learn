@@ -347,6 +347,17 @@ def setup():
         commands = ['load', 'load_random', 'plot_andrews', 'plot_frequency',
                     'plot_matrix', 'plot_radial', 'preprocess', 'run',
                     'visualize', 'help', 'quit']
+        for dirname, dirnames, filenames in os.walk('.'):
+            if '.git' in dirnames:
+                # don't go into any .git directories.
+                dirnames.remove('.git')
+            # Add path to subdirectories
+            commands.extend([os.path.join(dirname, sub_dir) for sub_dir in dirnames])
+            # Add path to all filenames in subdirectories.
+            commands.extend([os.path.join(dirname, filename) for filename in filenames])
+            # Remove './' header in file strings.
+            commands = [cmd.strip('./') for cmd in commands]
+
         options = [i for i in commands if i.startswith(text)]
         try:
             return options[state]
