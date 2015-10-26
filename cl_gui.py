@@ -17,7 +17,6 @@ from glob import glob
 from pandas.tools.plotting import radviz
 from pandas.tools.plotting import scatter_matrix
 from pandas.tools.plotting import andrews_curves
-from prygress import progress
 from sklearn import cross_validation
 from sklearn.metrics import confusion_matrix
 from sklearn.tree import DecisionTreeClassifier
