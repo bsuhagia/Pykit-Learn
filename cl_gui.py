@@ -201,9 +201,10 @@ def plot_class_frequency_bar(target, bar_width=.35):
     ax.set_xticks(ind)
     ax.bar(ind, target_counts.values(), width=bar_width, align='center')
     ax.set_title(Status.FILENAME)
+    ax.set_xlabel('Class')
     ax.set_ylabel('Frequency')
-
     ax.set_xticklabels(target_counts.keys())
+    ax.set_title('Bar Chart of Class Label Frequencies')
     plt.savefig(join(Status.TEMP_DIR, Status.FREQ_NAME))
 
 
@@ -212,23 +213,27 @@ def plot_feature_matrix(data_frame):
     g = sns.PairGrid(data_frame)
     g.map(plt.scatter)
     # plt.show(block=False)
+    plt.title('Feature Matrix')
     plt.savefig(join(Status.TEMP_DIR, Status.FM_NAME))
 
 def plot_radial(data_frame, class_name):
     plt.figure()
     radviz(data_frame, class_name)
     # plt.show(block=False)
+    plt.title('Radial Plot')
     plt.savefig(join(Status.TEMP_DIR, Status.RADIAL_NAME))
 
 def plot_andrews(data_frame, class_name):
     plt.figure()
     andrews_curves(data_frame, class_name)
+    plt.title('Andrews Curve')
     # plt.show(block=False)
     plt.savefig(join(Status.TEMP_DIR, Status.ANDREWS_NAME))
 
 def plot_scatter_matrix(data_frame):
     scatter_matrix(data_frame, alpha=0.2, figsize=(10, 10), diagonal='kde')
     # plt.show(block=False)
+    plt.title('Scatter Matrix with KDEs')
     plt.savefig(join(Status.TEMP_DIR, Status.SCM_NAME))
 
 def plot_2d_dist(X, y):
@@ -254,7 +259,7 @@ def plot_2d_dist(X, y):
     # Set plot labels and save.
     plt.xlabel('x1')
     plt.ylabel('x2')
-    plt.title('Distribution of input data')
+    plt.title('Distribution of Dataset')
     plt.legend(loc='best')
     plt.savefig(join(Status.TEMP_DIR, Status.TD_NAME))
 
@@ -268,7 +273,6 @@ def dispatch_preprocess(args):
     parser.add_argument('-norm', dest='norm', action='store_true',
                         help="Normalize the values of each feature.")
     p_args = parser.parse_args(args)
-    print p_args
 
     if p_args.std:
         print "Standardizing feature array..."
