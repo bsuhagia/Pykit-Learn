@@ -141,7 +141,7 @@ def load_arff(filename, vectorize_data=False, is_supervised=True):
         data: DataFrame object of features concatenated with target values
     """
     X, y, features = _load_arff(filename)
-    df = pd.DataFrame(np.hstack((X,y[:, np.newaxis])))
+    df = stack_to_data_frame(X, y)
 
     # For categorical data, we want the feature label names
     # in order to create a 1-hot encoding of the categorical
@@ -232,4 +232,17 @@ def generate_random_points(n_samples=100, n_features=2, centers=3):
         data_frame: DataFrame object
     """
     X, y = make_blobs(n_samples=n_samples, n_features=n_features, centers=centers)
-    return X, y, pd.DataFrame(np.hstack((X,y[:, np.newaxis])))
+    return X, y, stack_to_data_frame(X, y)
+
+def stack_to_data_frame(X, y):
+    """
+    Concatenates a feature array with its class labels.
+
+    Args:
+        X: feature array (n_samples, n_features)
+        y: target labels (1, n_samples)
+
+    Returns:
+        Pandas DataFrame with X and y together
+    """
+    return pd.DataFrame(np.hstack((X, y[:, np.newaxis])))

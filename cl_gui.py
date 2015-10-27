@@ -13,6 +13,7 @@ import traceback
 from argparse import ArgumentParser
 from collections import Counter
 from glob import glob
+from os.path import join
 
 from pandas.tools.plotting import radviz
 from pandas.tools.plotting import scatter_matrix
@@ -33,12 +34,18 @@ class Status(object):
     DATASET_LOADED = False
     FILENAME = ''
     EXTENSION = None
+    TEMP_DIR = '_temp/'
     USER_QUIT = 'user_quit'
-    RADIAL_NAME = '_temp/radial.png'
-    FREQ_NAME = '_temp/freq.png'
-    FM_NAME = '_temp/fm.png'
-    ANDREWS_NAME = '_temp/andrews.png'
+    RADIAL_NAME = 'plot_radial.png'
+    SCM_NAME = 'plot_scatter_matrix.png'
+    FREQ_NAME = 'plot_frequency.png'
+    FM_NAME = 'plot_feature_matrix.png'
+    ANDREWS_NAME = 'plot_andrews.png'
     FINISH_PLOTS = False
+    PLOT_COMMANDS = {'plot_frequency', 'plot_feature_matrix', 'plot_radial',
+                     'plot_andrews', 'plot_scatter_matrix'}
+    ALL_COMMANDS = list(PLOT_COMMANDS) + ['load', 'load_random', 'preprocess',
+                                          'run', 'visualize', 'help', 'quit']
 
 
 class InvalidCommandException(Exception):
@@ -125,18 +132,36 @@ def update_feature_array(changed_X):
         cPickle.dump(pd.DataFrame(changed_X), f)
 
 
-def visualize_dataset(command='', plot_all=False):
+def visualize_dataset(command='', flags=[], plot_all=False, *args, **kwargs):
+    """
+    Create and display visualizations to user.
+    """
+
+    # Build parser for visualization
+    parser = ArgumentParser()
+    parser.add_argument('--suppress', action='store_true', dest='suppress',
+                        help='Disable viewing of any generated plot(s).')
+    p_args = parser.parse_args(flags)
+
     if Status.DATASET_LOADED:
         print "Creating visualization(s)",
         make_visualizations(command, plot_all)
         print ""
-        print "Viewing generated plots..."
-        view_saved_plots()
+        if not p_args.suppress:
+            print "Viewing generated plots..."
+            view_saved_plots(command)
     else:
         raise InvalidCommandException("Can't visualize an unloaded dataset!")
 
-def view_saved_plots():
-    for im_file in glob('_temp/*.png'):
+def view_saved_plots(plot_name=''):
+    # View all plots by default
+    if plot_name == '':
+        plot_name = '*.png'
+        files = glob(join(Status.TEMP_DIR, plot_name))
+    else:
+        files = glob(join(Status.TEMP_DIR, plot_name + '.png'))
+
+    for im_file in files:
         im = Image.open(im_file, 'r')
         im.show()
 
@@ -148,14 +173,16 @@ def make_visualizations(command='', plot_all=False):
     X, y, data_frame = get_pickled_dataset()
     class_name = data_frame.dtypes.index[-1]
 
-    if command == 'class_frequency' or plot_all:
+    if command == 'plot_frequency' or plot_all:
         plot_class_frequency_bar(y)
-    if command == 'feature_matrix':
+    if command == 'plot_feature_matrix':
         plot_feature_matrix(data_frame)
-    if command == 'radial' or plot_all:
+    if command == 'plot_radial' or plot_all:
         plot_radial(data_frame, class_name)
-    if command == 'andrews' or plot_all:
+    if command == 'plot_andrews' or plot_all:
         plot_andrews(data_frame, class_name)
+    if command == 'plot_scatter_matrix':
+        plot_scatter_matrix(data_frame)
 
 def reset_plot_status():
     Status.FINISH_PLOTS = False
@@ -174,7 +201,7 @@ def plot_class_frequency_bar(target, bar_width=.35):
     ax.set_ylabel('Frequency')
 
     ax.set_xticklabels(target_counts.keys())
-    plt.savefig(Status.FREQ_NAME)
+    plt.savefig(join(Status.TEMP_DIR, Status.FREQ_NAME))
 
 
 def plot_feature_matrix(data_frame):
@@ -182,23 +209,24 @@ def plot_feature_matrix(data_frame):
     g = sns.PairGrid(data_frame)
     g.map(plt.scatter)
     # plt.show(block=False)
-    plt.savefig(Status.FM_NAME)
+    plt.savefig(join(Status.TEMP_DIR, Status.FM_NAME))
 
 def plot_radial(data_frame, class_name):
     plt.figure()
     radviz(data_frame, class_name)
     # plt.show(block=False)
-    plt.savefig(Status.RADIAL_NAME)
+    plt.savefig(join(Status.TEMP_DIR, Status.RADIAL_NAME))
 
 def plot_andrews(data_frame, class_name):
     plt.figure()
     andrews_curves(data_frame, class_name)
     # plt.show(block=False)
-    plt.savefig(Status.ANDREWS_NAME)
+    plt.savefig(join(Status.TEMP_DIR, Status.ANDREWS_NAME))
 
 def plot_scatter_matrix(data_frame):
     scatter_matrix(data_frame, alpha=0.2, figsize=(10, 10), diagonal='kde')
-    plt.show(block=False)
+    # plt.show(block=False)
+    plt.savefig(join(Status.TEMP_DIR, Status.SCM_NAME))
 
 
 def dispatch_preprocess(args):
@@ -361,18 +389,21 @@ def setup():
     import atexit
     import readline
 
-    histfile = os.path.join(os.environ['HOME'], '.pythonhistory')
+    hist_file = os.path.join(os.environ['HOME'], '.pythonhistory')
     try:
-        readline.read_history_file(histfile)
+        readline.read_history_file(hist_file)
     except IOError:
         pass
-    atexit.register(readline.write_history_file, histfile)
+
+    # Set a limit on the number of commands to remember.
+    # High values will hog system memory!
+    readline.set_history_length(25)
+    atexit.register(readline.write_history_file, hist_file)
 
     # Tab completion for GUI commands
     def completer(text, state):
-        commands = ['load', 'load_random', 'plot_andrews', 'plot_frequency',
-                    'plot_matrix', 'plot_radial', 'preprocess', 'run',
-                    'visualize', 'help', 'quit']
+        commands = Status.ALL_COMMANDS
+
         for dirname, dirnames, filenames in os.walk('.'):
             if '.git' in dirnames:
                 # don't go into any .git directories.
@@ -398,7 +429,7 @@ def setup():
         readline.parse_and_bind("bind '\t' rl_complete")
     else:
         readline.parse_and_bind("tab: complete")
-    del histfile, readline, rlcompleter, warnings
+    del hist_file, readline, rlcompleter, warnings
 
 
 def quit_gui():
@@ -420,8 +451,9 @@ Commands:
     plot_andrews            Plots an Andrews curve of the dataset.
 
     plot_frequency          View the frequency of each class label.
-    plot_matrix             Generate a matrix plot of feature-feature
+    plot_feature_matrix     Generate a matrix plot of feature-feature
                             relationships.
+    plot_scatter_matrix     Matrix plot with KDEs along the diagonal.
     plot_radial             Plot a radial chart of the dataset.
     preprocess [flags]      Preprocesses a dataset. Flags are
                                 -std Standardize to mean 0 and variance 1
@@ -434,6 +466,7 @@ Commands:
         -cv [int]           Enables k-fold cross validation.
                             Example: "run -A dt -test_ratio .3 -cv 5"
     visualize               Plots all possible visualizations for input data.
+        --suppress          Disable plotting output.
     help                    Provides a help screen of available commands.
     quit                    Quits the command line GUI.
     """
@@ -451,18 +484,10 @@ def process(line):
         load_random()
     elif command == 'preprocess':
         dispatch_preprocess(args)
-    elif command == 'plot_frequency':
-        visualize_dataset('class_frequency')
-    elif command == 'plot_matrix':
-        visualize_dataset('feature_matrix')
-    elif command == 'plot_radial':
-        visualize_dataset('radial')
-    elif command == 'plot_andrews':
-        visualize_dataset('andrews')
-    elif command == 'plot_scatter_matrix':
-        visualize_dataset('scatter_matrix')
+    elif command in Status.PLOT_COMMANDS:
+        visualize_dataset(command, args)
     elif command == 'visualize':
-        visualize_dataset(plot_all=True)
+        visualize_dataset(flags=args, plot_all=True)
     elif command == 'run':
         dispatch_run(args)
     elif command == 'help':
