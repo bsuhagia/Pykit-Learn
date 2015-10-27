@@ -41,9 +41,10 @@ class Status(object):
     FREQ_NAME = 'plot_frequency.png'
     FM_NAME = 'plot_feature_matrix.png'
     ANDREWS_NAME = 'plot_andrews.png'
+    TD_NAME = 'plot_2d.png'
     FINISH_PLOTS = False
     PLOT_COMMANDS = {'plot_frequency', 'plot_feature_matrix', 'plot_radial',
-                     'plot_andrews', 'plot_scatter_matrix'}
+                     'plot_andrews', 'plot_scatter_matrix', 'plot_2d'}
     ALL_COMMANDS = list(PLOT_COMMANDS) + ['load', 'load_random', 'preprocess',
                                           'run', 'visualize', 'help', 'quit']
 
@@ -132,7 +133,7 @@ def update_feature_array(changed_X):
         cPickle.dump(pd.DataFrame(changed_X), f)
 
 
-def visualize_dataset(command='', flags=[], plot_all=False, *args, **kwargs):
+def visualize_dataset(command='', flags=(), plot_all=False, *args, **kwargs):
     """
     Create and display visualizations to user.
     """
@@ -183,6 +184,8 @@ def make_visualizations(command='', plot_all=False):
         plot_andrews(data_frame, class_name)
     if command == 'plot_scatter_matrix':
         plot_scatter_matrix(data_frame)
+    if command == 'plot_2d' or plot_all:
+        plot_2d_dist(X, y)
 
 def reset_plot_status():
     Status.FINISH_PLOTS = False
@@ -228,6 +231,32 @@ def plot_scatter_matrix(data_frame):
     # plt.show(block=False)
     plt.savefig(join(Status.TEMP_DIR, Status.SCM_NAME))
 
+def plot_2d_dist(X, y):
+    """
+    Plots the feature array points on a plane.
+
+    If the n_dims > 2, only consider the first two features.
+    """
+    from itertools import cycle
+    plt.figure()
+    colors = cycle('bgrcmyk')
+
+    if len(X[0]) > 2:
+        x_values = X[:, :2]
+    else:
+        x_values = X
+
+    # Create a color-coded scatter plot by class label.
+    for class_label, c in zip(np.unique(y), colors):
+        xs = x_values[np.where(y == class_label)]
+        plt.scatter(xs[:, 0], xs[:, 1], c=c, label=class_label)
+
+    # Set plot labels and save.
+    plt.xlabel('x1')
+    plt.ylabel('x2')
+    plt.title('Distribution of input data')
+    plt.legend(loc='best')
+    plt.savefig(join(Status.TEMP_DIR, Status.TD_NAME))
 
 def dispatch_preprocess(args):
     if not Status.DATASET_LOADED:
@@ -448,6 +477,7 @@ Commands:
     load [file]             Loads the dataset at the path specified by [file].
                             No quotes "" around filename!
     load_random             Load a randomly generated dataset with 3 classes.
+    plot_2d                 Plot a 2-D distribution of the dataset.
     plot_andrews            Plots an Andrews curve of the dataset.
 
     plot_frequency          View the frequency of each class label.

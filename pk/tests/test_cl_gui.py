@@ -43,3 +43,11 @@ def test_run_decision_tree():
     cl_gui.process('load pk/tests/iris2.csv')
     cl_gui.process('run -A dt -test_ratio .5 -cv 15')
     td()
+
+def test_plot_2d():
+    setup()
+    cl_gui.process('load_random')
+    cl_gui.process('plot_2d --suppress')
+    temp_files = os.listdir('_temp/')
+    assert_true('plot_2d.png' in temp_files)
+    td()
