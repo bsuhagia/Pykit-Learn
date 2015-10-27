@@ -46,7 +46,8 @@ class Status(object):
     PLOT_COMMANDS = {'plot_frequency', 'plot_feature_matrix', 'plot_radial',
                      'plot_andrews', 'plot_scatter_matrix', 'plot_2d'}
     ALL_COMMANDS = list(PLOT_COMMANDS) + ['load', 'load_random', 'preprocess',
-                                          'run', 'visualize', 'help', 'quit']
+                                          'run', 'visualize', 'help', 'quit',
+                                          'see_images']
 
 
 class InvalidCommandException(Exception):
@@ -92,6 +93,7 @@ def load_random():
 
     # Update appropriate status flags.
     Status.DATASET_LOADED = True
+    Status.FILENAME = 'RANDOM'
 
     print 'Feature Array:\n %s' % X
     print 'Target classifications:\n %s' % y
@@ -161,6 +163,16 @@ def view_saved_plots(plot_name=''):
         files = glob(join(Status.TEMP_DIR, plot_name))
     else:
         files = glob(join(Status.TEMP_DIR, plot_name + '.png'))
+
+    for im_file in files:
+        im = Image.open(im_file, 'r')
+        im.show()
+
+def see_images(*args):
+    if '_temp/*.png' in args:
+        files = glob('_temp/*.png')
+    else:
+        files = args
 
     for im_file in files:
         im = Image.open(im_file, 'r')
@@ -259,7 +271,7 @@ def plot_2d_dist(X, y):
     # Set plot labels and save.
     plt.xlabel('x1')
     plt.ylabel('x2')
-    plt.title('Distribution of Dataset')
+    plt.title('Distribution of Dataset ({})'.format(Status.FILENAME))
     plt.legend(loc='best')
     plt.savefig(join(Status.TEMP_DIR, Status.TD_NAME))
 
@@ -436,19 +448,21 @@ def setup():
     # Tab completion for GUI commands
     def completer(text, state):
         commands = Status.ALL_COMMANDS
-
+        file_paths = []
         for dirname, dirnames, filenames in os.walk('.'):
             if '.git' in dirnames:
                 # don't go into any .git directories.
                 dirnames.remove('.git')
             # Add path to subdirectories
-            commands.extend([os.path.join(dirname, sub_dir) for sub_dir in dirnames])
+            file_paths.extend([os.path.join(dirname, sub_dir) for sub_dir in dirnames])
             # Add path to all filenames in subdirectories.
-            commands.extend([os.path.join(dirname, filename) for filename in filenames])
+            file_paths.extend([os.path.join(dirname, filename) for filename in filenames])
             # Remove './' header in file strings.
-            commands = [cmd.strip('./') for cmd in commands]
+            file_paths = [file.strip('./') for file in file_paths]
 
         options = [i for i in commands if i.startswith(text)]
+        options.extend([f for f in file_paths if f.startswith(text)])
+
         try:
             return options[state]
         except IndexError:
@@ -466,7 +480,7 @@ def setup():
 
 
 def quit_gui():
-    shutil.rmtree("_temp")
+    shutil.rmtree(Status.TEMP_DIR)
     logging.info("Quitting application...")
     sys.exit(Status.USER_QUIT)
 
@@ -493,6 +507,8 @@ Commands:
                                 -std Standardize to mean 0 and variance 1
                                 -norm Normalize each feature to range [0,1]
                                 Eg. "preprocess -std"
+    see_images [files]      View temporarily stored plots.
+                                Eg. "see_images _temp/plot_2d.png"
     run                     Runs the ML alg on the loaded dataset.
         -A [alg]            REQUIRED flag! Options for [alg]:
                                 dt = (Decision Tree)
@@ -522,6 +538,8 @@ def process(line):
         visualize_dataset(command, args)
     elif command == 'visualize':
         visualize_dataset(flags=args, plot_all=True)
+    elif command == 'see_images':
+        see_images(*args)
     elif command == 'run':
         dispatch_run(args)
     elif command == 'help':
