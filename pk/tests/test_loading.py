@@ -6,7 +6,7 @@ import os
 from numpy.testing import assert_array_equal
 from nose.tools import assert_true
 from numpy.testing import assert_array_almost_equal
-
+from pandas.util.testing import assert_frame_equal
 from pk.utils.loading import *
 
 
@@ -112,9 +112,25 @@ def test_load_excel():
     assert_array_almost_equal(X, expX)
     assert_array_equal(y, expY)
 
+def test_generate_random():
+    np.random.seed(42)
+    X, y, df = generate_random_points(5)
+    expX = np.array([[-0.92998481,  9.78172086],
+                       [ 4.88184111,  0.05988944],
+                       [-2.97867201,  9.55684617],
+                       [-8.60454502, -7.44239712],
+                       [ 4.17646114,  1.50743993]])
+    expY = np.array([0, 1, 0, 2, 1])
+    exp_df = pd.DataFrame(np.hstack((expX,expY[:, np.newaxis])))
+
+    assert_array_almost_equal(X, expX)
+    assert_array_equal(y, expY)
+    assert_frame_equal(df, exp_df)
+
 # test_load_arff()
 # test_load_arff_categorical()
 # test_vectorize()
 # test_vectorize_numeric()
 # test_load_categorical_no_vectorize()
 # test_load_excel()
+# test_generate_random()

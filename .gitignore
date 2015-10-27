@@ -66,4 +66,7 @@ pk/.ipynb_checkpoints/
 # Runtime Folder
 temp/
 
+# Logging files
+*.log
+
 
