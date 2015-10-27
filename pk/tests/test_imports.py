@@ -15,3 +15,4 @@ def test_imports():
     import pandas
     import PyQt4
     import PIL
+    import wx

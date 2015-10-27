@@ -83,6 +83,23 @@ def load_file(filename):
     print 'Feature Array:\n %s' % X
     print 'Target classifications:\n %s' % y
 
+def load_file_gui():
+    import wx
+
+    def get_path(wildcard):
+        app = wx.App(None)
+        style = wx.FD_OPEN | wx.FD_FILE_MUST_EXIST
+        dialog = wx.FileDialog(None, 'Open Files', wildcard=wildcard, style=style)
+        if dialog.ShowModal() == wx.ID_OK:
+            path = dialog.GetPath()
+        else:
+            path = None
+        dialog.Destroy()
+        app.Destroy()
+        return path
+
+    filename = get_path(("CSV files (*.csv)|*.csv|XLS files (*.xls)|*.xls|ARFF files (*.arff)|*.arff"))
+    load_file(filename)
 
 def load_random():
     """
@@ -532,6 +549,8 @@ def process(line):
         load_file(*args)
     elif command == 'load_random':
         load_random()
+    elif command == 'load_file_gui':
+        load_file_gui()
     elif command == 'preprocess':
         dispatch_preprocess(args)
     elif command in Status.PLOT_COMMANDS:
@@ -569,6 +588,8 @@ def main():
             print ioe.message
         except InvalidCommandException as inv:
             print inv.message
+        except AttributeError as ae:
+            print ae.message
         except Exception:
             traceback.print_exc()
         except SystemExit as se:
