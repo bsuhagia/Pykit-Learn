@@ -34,5 +34,12 @@ def normalize_data(X, norm='l2', axis=1, copy=True):
 
 def binarize():
     pass
-def remove_incomplete_examples():
-    pass
+def remove_incomplete_examples(missing_char="?"):
+    """
+    Removes examples with missing/incomplete features.
+
+    Args:
+        missing_char: Placeholder for intended value
+    Returns:
+        Numpy feature array with bad examples removed
+    """
