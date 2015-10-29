@@ -1,1 +1,8 @@
-"Sepal.Length","Sepal.Width","Petal.Length","Petal.Width","Species"
+"F1","F2","F3","F4","Class"
+1,2,3,4,good
+2,3,4,5,good
+1,?,?,3,bad
+2,3,4,5,good
+?,?,?,?,bad
+?,0,s,1,bad
+1,2,3,4,good
