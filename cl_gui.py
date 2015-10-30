@@ -220,6 +220,7 @@ def reset_plot_status():
     Status.FINISH_PLOTS = False
 
 def plot_class_frequency_bar(target, bar_width=.35):
+    plt.clf()
     # Get the frequency of each class label
     classes = np.unique(target)
     target_counts = Counter(target)
@@ -239,6 +240,7 @@ def plot_class_frequency_bar(target, bar_width=.35):
 
 def plot_feature_matrix(data_frame):
     # Plot the matrix of feature-feature pairs
+    plt.clf()
     g = sns.PairGrid(data_frame)
     g.map(plt.scatter)
     # plt.show(block=False)
@@ -246,23 +248,24 @@ def plot_feature_matrix(data_frame):
     plt.savefig(join(Status.TEMP_DIR, Status.FM_NAME))
 
 def plot_radial(data_frame, class_name):
-    plt.figure()
+    plt.clf()
     radviz(data_frame, class_name)
     # plt.show(block=False)
     plt.title('Radial Plot')
     plt.savefig(join(Status.TEMP_DIR, Status.RADIAL_NAME))
 
 def plot_andrews(data_frame, class_name):
-    plt.figure()
+    plt.clf()
     andrews_curves(data_frame, class_name)
     plt.title('Andrews Curve')
     # plt.show(block=False)
     plt.savefig(join(Status.TEMP_DIR, Status.ANDREWS_NAME))
 
 def plot_scatter_matrix(data_frame):
-    scatter_matrix(data_frame, alpha=0.2, figsize=(10, 10), diagonal='kde')
+    plt.clf()
+    axes = scatter_matrix(data_frame, alpha=0.2, figsize=(10, 10), diagonal='kde')
     # plt.show(block=False)
-    plt.title('Scatter Matrix with KDEs')
+    axes[0][0].set_title('Scatter Matrix with KDEs')
     plt.savefig(join(Status.TEMP_DIR, Status.SCM_NAME))
 
 def plot_2d_dist(X, y):
@@ -271,8 +274,8 @@ def plot_2d_dist(X, y):
 
     If the n_dims > 2, only consider the first two features.
     """
+    plt.clf()
     from itertools import cycle
-    plt.figure()
     colors = cycle('bgrcmyk')
 
     if len(X[0]) > 2:
