@@ -1,6 +1,9 @@
 import numpy as np
 from sklearn.preprocessing import scale
 from sklearn.preprocessing import normalize
+from sklearn.preprocessing import LabelEncoder
+
+from pk.utils.loading import is_number
 
 def standardize(X, axis=0, with_mean=True, with_std=True, copy=True):
     """
@@ -34,6 +37,24 @@ def normalize_data(X, norm='l2', axis=1, copy=True):
 
 def binarize():
     pass
+
+def encode_labels(X):
+    """
+    Converts categorical feature columns to a numerical values 0 - num_features.
+
+    Arguments:
+        X: feature array
+
+    Returns:
+        Feature array with categorical columns replaced with numbers.
+    """
+    # Gets feature labels and stores them in a dict.
+    feature_dict = { i:X[:, i, np.newaxis] for i in xrange(len(X[0])) }
+    for i in feature_dict:
+        if not is_number(X[0, i]):
+            feature_dict[i] = LabelEncoder().fit_transform(feature_dict[i])
+
+    return np.array(feature_dict.values()).T
 
 def remove_incomplete_examples(X, y, missing_char="?"):
     """
