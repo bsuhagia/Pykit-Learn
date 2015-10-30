@@ -83,16 +83,6 @@ def _convert_dict_values_to_num(examples):
 
     examples - list<dict>
     """
-
-    def is_number(s):
-        """ True if string s can be converted to a number type.
-        """
-        try:
-            float(s)
-            return True
-        except ValueError:
-            return False
-
     new_examples = examples[:]
     for dct in new_examples:
         for key in dct:
@@ -101,6 +91,14 @@ def _convert_dict_values_to_num(examples):
                 dct[key] = float(value)
     return new_examples
 
+def is_number(s):
+        """ True if string s can be converted to a number type.
+        """
+        try:
+            float(s)
+            return True
+        except ValueError:
+            return False
 
 def _convert_target_to_num(target):
     """
@@ -112,15 +110,6 @@ def _convert_target_to_num(target):
     Returns:
         converted target array to float dtype
     """
-
-    def is_number(s):
-        """ True if string s can be converted to a number type.
-        """
-        try:
-            float(s)
-            return True
-        except ValueError:
-            return False
 
     if all(map(is_number, target)):
         return target.astype(float)
