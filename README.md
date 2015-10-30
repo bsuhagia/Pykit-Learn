@@ -15,7 +15,7 @@ nosetests
   - [x] Standardization
   - [x] Normalization of training examples
   - [ ] Feature Binarization
-  - [ ] Remove examples with '?' missing values
+  - [x] Remove examples with '?' missing values
 - [ ] Supervised Learning
   - [ ] Linear & Quadratic Discriminant Analysis
   - [ ] SVMs
@@ -77,3 +77,5 @@ nosetests
 - [ ] Dataset Loading Utilities
   - [ ] Download data from mldata.org
   - [x] Generate a random dataset w/ class labels
+- [ ] Visualizations
+    - [x] Image segmentation demo
