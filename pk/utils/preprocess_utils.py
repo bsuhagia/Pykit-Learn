@@ -5,68 +5,76 @@ from sklearn.preprocessing import LabelEncoder
 
 from pk.utils.loading import is_number
 
-def standardize(X, axis=0, with_mean=True, with_std=True, copy=True):
-    """
-    Standardize a dataset along any axis.
 
-    Args:
-        X: numpy feature array of size (n_examples, n_features)
-        axis: axis to compute mean and stds along.
-        with_mean: if True, center data before scaling
-        with_std: if True, scale to unit variance
-        copy: if False, do inplace normalization and avoid copying array
+class PreprocessingEngine(object):
+    def standardize(self, X, axis=0, with_mean=True, with_std=True, copy=True):
+        """
+        Standardize a dataset along any axis.
 
-    Returns:
-        changed_X: mean-shifted X with unit variance
-    """
-    return scale(X, axis, with_mean, with_std, copy)
+        Args:
+            X: numpy feature array of size (n_examples, n_features)
+            axis: axis to compute mean and stds along.
+            with_mean: if True, center data before scaling
+            with_std: if True, scale to unit variance
+            copy: if False, do inplace normalization and avoid copying array
 
-def normalize_data(X, norm='l2', axis=1, copy=True):
-    """
-    Scale input vectors to unit norm.
+        Returns:
+            changed_X: mean-shifted X with unit variance
+        """
+        return scale(X, axis, with_mean, with_std, copy)
 
-    Args:
-        X: numpy feature array with shape (n_samples, n_features)
-        norm: the norm to use
-        axis: axis along which to normalize
-        copy: if False, do inplace row normalization
-    Returns:
-        A normalized numpy array.
-    """
-    return normalize(X, norm, axis, copy)
+    def normalize_data(self, X, norm='l2', axis=1, copy=True):
+        """
+        Scale input vectors to unit norm.
 
-def binarize():
-    pass
+        Args:
+            X: numpy feature array with shape (n_samples, n_features)
+            norm: the norm to use
+            axis: axis along which to normalize
+            copy: if False, do inplace row normalization
+        Returns:
+            A normalized numpy array.
+        """
+        return normalize(X, norm, axis, copy)
 
-def encode_labels(X):
-    """
-    Converts categorical feature columns to a numerical values 0 - num_features.
+    def binarize(self):
+        pass
 
-    Arguments:
-        X: feature array
+    def encode_labels(self, X):
+        """
+        Converts categorical feature columns to a numerical values 0 - num_features.
 
-    Returns:
-        Feature array with categorical columns replaced with numbers.
-    """
-    # Gets feature labels and stores them in a dict.
-    feature_dict = { i:X[:, i, np.newaxis] for i in xrange(len(X[0])) }
-    for i in feature_dict:
-        if not is_number(X[0, i]):
-            feature_dict[i] = LabelEncoder().fit_transform(feature_dict[i])
+        Arguments:
+            X: feature array
 
-    return np.array(feature_dict.values()).T
+        Returns:
+            Feature array with categorical columns replaced with numbers.
+        """
+        # Gets feature labels and stores them in a dict.
+        feature_dict = { i:X[:, i] for i in xrange(len(X[0])) }
+        for i in feature_dict:
+            if not is_number(X[0, i]):
+                feature_dict[i] = LabelEncoder().fit_transform(feature_dict[i])
 
-def remove_incomplete_examples(X, y, missing_char="?"):
-    """
-    Removes examples with missing/incomplete features.
+        return np.array(feature_dict.values()).T
 
-    Args:
-        missing_char: Placeholder for intended value
-    Returns:
-        Numpy feature array X with bad examples removed
-        target classes with bad examples removed
-    """
-    row_ind, _ = np.where(X == missing_char)
-    row_ind = np.unique(row_ind)
-    valid_rows = np.delete(np.arange(len(X)), row_ind)
-    return X[valid_rows, :], y[valid_rows]
+    def convert_to_float_array(self, arr):
+        """
+        Converts a numpy array to float data type.
+        """
+        return arr.astype(float)
+
+    def remove_incomplete_examples(self, X, y, missing_char="?"):
+        """
+        Removes examples with missing/incomplete features.
+
+        Args:
+            missing_char: Placeholder for intended value
+        Returns:
+            Numpy feature array X with bad examples removed
+            target classes with bad examples removed
+        """
+        row_ind, _ = np.where(X == missing_char)
+        row_ind = np.unique(row_ind)
+        valid_rows = np.delete(np.arange(len(X)), row_ind)
+        return X[valid_rows, :], y[valid_rows]

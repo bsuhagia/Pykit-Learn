@@ -305,17 +305,18 @@ def dispatch_preprocess(args):
     parser.add_argument('-norm', dest='norm', action='store_true',
                         help="Normalize the values of each feature.")
     p_args = parser.parse_args(args)
+    pe = PreprocessingEngine()
 
     if p_args.std:
         print "Standardizing feature array..."
         X, y, _ = get_pickled_dataset()
-        new_X = standardize(X)
+        new_X = pe.standardize(X)
         print new_X
         update_feature_array(new_X)
     if p_args.norm:
         print "Normalizing feature array..."
         X, y, _ = get_pickled_dataset()
-        new_X = normalize_data(X)
+        new_X = pe.normalize_data(X)
         print new_X
         update_feature_array(new_X)
 
