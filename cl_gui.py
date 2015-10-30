@@ -15,12 +15,14 @@ from collections import Counter
 from glob import glob
 from os.path import join
 
+
 from pandas.tools.plotting import radviz
 from pandas.tools.plotting import scatter_matrix
 from pandas.tools.plotting import andrews_curves
 from sklearn import cross_validation
-from sklearn.metrics import confusion_matrix
-from sklearn.tree import DecisionTreeClassifier
+
+
+
 import matplotlib.pyplot as plt
 import seaborn as sns
 from PIL import Image
@@ -28,7 +30,8 @@ from PIL import Image
 from pk.utils.loading import *
 from pk.utils.preprocess_utils import *
 from pk.utils.prygress import progress
-
+from pk.utils.classification_utils import *
+from pk.utils.performance_utils import  *
 
 class Status(object):
     DATASET_LOADED = False
@@ -362,76 +365,6 @@ def dispatch_run(args):
             # Plot the confusion matrix
             cm = get_confusion_matrix(clf, X_test, y_test)
             plot_confusion_matrix(cm, y=np.unique(y))
-
-
-def train_decision_tree(X, y, criterion='gini', splitter='best', max_depth=None,
-                        min_samples_split=2, min_samples_leaf=1,
-                        max_features=None, random_state=None,
-                        max_leaf_nodes=None):
-    """
-    Builds a decision tree model.
-
-    Returns:
-     clf: Fitted Decision tree classifier object
-    """
-    clf = DecisionTreeClassifier(criterion=criterion,
-                                 splitter=splitter,
-                                 max_depth=max_depth,
-                                 min_samples_split=min_samples_split,
-                                 min_samples_leaf=min_samples_leaf,
-                                 max_features=max_features,
-                                 random_state=random_state,
-                                 max_leaf_nodes=max_leaf_nodes)
-    clf = clf.fit(X, y)
-    return clf
-
-
-def get_confusion_matrix(clf, X, true_y):
-    predicted_y = clf.predict(X)
-    matrix = confusion_matrix(true_y, predicted_y)
-    print 'Confusion Matrix is: \n%s' % matrix
-    return matrix
-
-
-def plot_confusion_matrix(cm, y, title='Confusion matrix', cmap=plt.cm.Blues,
-                          continuous_class=False):
-    if continuous_class:
-        return None
-    plt.imshow(cm, interpolation='nearest', cmap=cmap)
-    plt.title(title)
-    plt.colorbar()
-    tick_marks = np.arange(len(np.unique(y)))
-    plt.xticks(tick_marks, np.unique(y), rotation=45)
-    plt.yticks(tick_marks, np.unique(y))
-    plt.tight_layout()
-    plt.ylabel('True label')
-    plt.xlabel('Predicted label')
-    plt.show(block=False)
-
-
-def get_train_accuracy(clf, X, y):
-    print 'Train accuracy is %f%%' % (clf.score(X, y) * 100)
-    return clf.score(X, y)
-
-
-def get_test_accuracy(clf, X, y):
-    print 'Test accuracy is %f%%' % (clf.score(X, y) * 100)
-    return clf.score(X, y)
-
-
-def get_cv_accuracy(clf, X, y, cv=10):
-    scores = cross_validation.cross_val_score(clf, X, y, cv=cv)
-    print 'Scores: ' + ', '.join(map(str, scores))
-    avg = scores.mean()
-    print 'Average accuracy: %f (+/- %f)' % (avg, scores.std() * 2)
-    return scores, avg
-
-
-def benchmark(X, y, training_func, *args, **kwargs):
-    clf = training_func(X, y, *args, **kwargs)
-    get_train_accuracy(clf, X, y)
-    get_test_accuracy(clf, X, y)
-
 
 def setup():
     # Create temporary directory for storing serialized objects.
