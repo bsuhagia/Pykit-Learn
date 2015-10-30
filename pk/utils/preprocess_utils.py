@@ -2,11 +2,16 @@ import numpy as np
 from sklearn.preprocessing import scale
 from sklearn.preprocessing import normalize
 from sklearn.preprocessing import LabelEncoder
+from sklearn.preprocessing import LabelBinarizer
+from sklearn.preprocessing import Imputer
 
 from pk.utils.loading import is_number
 
 
 class PreprocessingEngine(object):
+    """
+    This class provides functions for preprocessing the feature array.
+    """
     def standardize(self, X, axis=0, with_mean=True, with_std=True, copy=True):
         """
         Standardize a dataset along any axis.
@@ -32,13 +37,23 @@ class PreprocessingEngine(object):
             norm: the norm to use
             axis: axis along which to normalize
             copy: if False, do inplace row normalization
+
         Returns:
             A normalized numpy array.
         """
         return normalize(X, norm, axis, copy)
 
-    def binarize(self):
-        pass
+    def binarize(self, y):
+        """
+        Binarize class labels to support 1 vs. all classfication.
+
+        Args:
+            y: target - numpy array (1, n_examples)
+
+        Returns:
+            A binarized target array
+        """
+        return LabelBinarizer().fit_transform(y)
 
     def encode_labels(self, X):
         """
@@ -70,6 +85,7 @@ class PreprocessingEngine(object):
 
         Args:
             missing_char: Placeholder for intended value
+
         Returns:
             Numpy feature array X with bad examples removed
             target classes with bad examples removed
@@ -78,3 +94,24 @@ class PreprocessingEngine(object):
         row_ind = np.unique(row_ind)
         valid_rows = np.delete(np.arange(len(X)), row_ind)
         return X[valid_rows, :], y[valid_rows]
+
+    def impute_missing_values(self, X, missing_values='NaN', strategy='mean',
+                              axis=0, verbose=0, copy=True):
+        """
+        Replaces missing values in the feature array with inferred values.
+
+        Args:
+            missing_values: placeholder for missing value
+            strategy: default - 'mean', replace missing_values using strategy
+                    along the axis
+            axis: axis along which to impute
+            verbose: verbosity of imputer
+            copy: if True, create a copy of X
+
+        Returns:
+            Numpy feature array X with bad examples removed
+            target classes with bad examples removed
+        """
+        imp = Imputer(missing_values=missing_values, strategy=strategy, axis=axis,
+                      verbose=verbose, copy=copy)
+        return imp.fit_transform(X)

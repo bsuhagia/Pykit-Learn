@@ -1,5 +1,4 @@
 # Author: Sean Dai
-import logging
 import os
 
 from numpy.testing import assert_array_equal
@@ -41,3 +40,29 @@ def test_remove_incomplete_examples():
     exp_y = np.array(['good', 'good', 'good', 'good'])
     assert_array_equal(X, exp_X)
     assert_array_equal(y, exp_y)
+
+def test_label_encoder():
+    X = np.array([['a','b',1], ['a','a',11], ['b','b',13], ['c', 'c', 100]])
+    expX = np.array([[0, 1, 1],
+                     [0, 0, 11],
+                     [1, 1, 13],
+                     [2, 2, 100]])
+    assert_array_almost_equal(pe.convert_to_float_array(pe.encode_labels(X)),
+                              expX)
+
+def test_binarize():
+    y = ['a', 'b', 'c', 'a']
+    exp_y = [[1, 0, 0],
+             [0, 1, 0],
+             [0, 0, 1],
+             [1, 0, 0]]
+    assert_array_almost_equal(pe.binarize(y), exp_y)
+
+def test_inpute_missing_values():
+    X = np.array([[1,2,'NaN'], [3,'NaN',5], [1,2,3]])
+    X = pe.encode_labels(X)
+    X = pe.impute_missing_values(X, missing_values='NaN')
+    exp_X = np.array([[ 1.,  2.,  4.],
+                      [ 3.,  2.,  5.],
+                      [ 1.,  2.,  3.]])
+    assert_array_almost_equal(X, exp_X)
