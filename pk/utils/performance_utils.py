@@ -29,21 +29,19 @@ def plot_confusion_matrix(cm, y, title='Confusion matrix', cmap=plt.cm.Blues,
 
 
 def get_train_accuracy(clf, X, y):
-    print 'Train accuracy is %f%%' % (clf.score(X, y) * 100)
-    return clf.score(X, y)
+    return round(((clf.score(X, y))*100),5)
 
 
 def get_test_accuracy(clf, X, y):
-    print 'Test accuracy is %f%%' % (clf.score(X, y) * 100)
-    return clf.score(X, y)
+    return round(((clf.score(X, y))*100),5)
 
 
 def get_cv_accuracy(clf, X, y, cv=10):
     scores = cross_validation.cross_val_score(clf, X, y, cv=cv)
-    print 'Scores: ' + ', '.join(map(str, scores))
+    # print 'Scores: ' + ', '.join(map(str, scores))
     avg = scores.mean()
-    print 'Average accuracy: %f (+/- %f)' % (avg, scores.std() * 2)
-    return scores, avg
+    # print 'Average accuracy: %f (+/- %f)' % (avg, scores.std() * 2)
+    return scores, round(avg*100, 5)
 
 
 def benchmark(X, y, training_func, *args, **kwargs):
