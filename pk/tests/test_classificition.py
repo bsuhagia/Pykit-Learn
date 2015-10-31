@@ -53,7 +53,24 @@ def runAll(X, y):
     _, qda_cv_acc = get_cv_accuracy(qda, X, y)
     T.add_row((["Quadratic Discriminant Analysis", qda_train_acc, qda_test_acc, qda_cv_acc]))
 
+    bag = train_bagging(X_train, y_train, base_estimator=dts)
+    bag_train_acc = get_train_accuracy(bag, X_train, y_train)
+    bag_test_acc = get_test_accuracy(bag, X_test, y_test)
+    _, bag_cv_acc = get_cv_accuracy(bag, X, y)
+    T.add_row((["Bagging", bag_train_acc, bag_test_acc, bag_cv_acc]))
+
+    rf = train_randomForest(X_train, y_train)
+    rf_train_acc = get_train_accuracy(rf, X_train, y_train)
+    rf_test_acc = get_test_accuracy(rf, X_test, y_test)
+    _, rf_cv_acc = get_cv_accuracy(rf, X, y)
+    T.add_row((["Random Forest", rf_train_acc, rf_test_acc, rf_cv_acc]))
+
+    sgd = train_stochaticGradientDescent(X_train, y_train)
+    sgd_train_acc = get_train_accuracy(sgd, X_train, y_train)
+    sgd_test_acc = get_test_accuracy(sgd, X_test, y_test)
+    _, sgd_cv_acc = get_cv_accuracy(sgd, X, y)
+    T.add_row((["Stochastic Gradient Descent", sgd_train_acc, sgd_test_acc, sgd_cv_acc]))
     print T
 
-X_data, y_data, dataset = load_csv('whitewines.csv')
+X_data, y_data, dataset = load_csv('iris2.csv')
 runAll(X_data,y_data)
