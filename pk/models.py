@@ -3,6 +3,7 @@
 """
 from sklearn.base import BaseEstimator
 from sklearn.tree import DecisionTreeClassifier
+from sklearn.mixture import GMM
 from pk.utils.loading import load_csv
 
 class BaseModel(object):
@@ -68,13 +69,29 @@ class SupervisedAlgorithm(Algorithm):
             raise Exception("Can't predict with untrained classifier!")
         return self.clf.predict(X)
 
+class UnsupervisedAlgorithm(Algorithm):
+    """
+    Class for unsupervised algorithms (eg. clustering, PCA, etc.)
+    """
+    def __init__(self, clf):
+        super(UnsupervisedAlgorithm, self).__init__(clf)
+
+    def fit(self, X):
+        self.clf = self._fit(X)
+
+    def predict(self, X):
+        if not self.fitted:
+            raise Exception("Can't predict with untrained classifier!")
+        return self.clf.predict(X)
+
 # X,y,_ = load_csv('tests/iris2.csv')
-# clf = DecisionTreeClassifier()
-#
-# a = SupervisedAlgorithm(clf)
+# clf = GMM(n_components=3)
+# a = UnsupervisedAlgorithm(clf)
 # print a.params
 # print a.fitted
-# a.fit(X,y)
+# a.fit(X)
 # print a.fitted
 # print a.params
-# print a.predict([4.9,3.0,1.4,0.2])
+# print a
+# print a.clf.means_
+# print a.predict([[1,2,3,11114]])

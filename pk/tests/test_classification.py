@@ -5,8 +5,15 @@ from pk.utils.classification_utils import *
 from prettytable import PrettyTable
 from pk.utils.loading import *
 import warnings
+from nose.tools import nottest
 
-def runAll(X, y):
+@nottest
+def get_test_accuracy():
+    pass
+
+def run_all():
+    X, y, _ = load_csv('iris2.csv')
+
     warnings.filterwarnings('ignore')
     T = PrettyTable(["Method", "Train Accuracy (%)", "Test Accuracy (%)", "Cross Validation Accuracy (%)"])
     X_train, X_test, y_train, y_test = cross_validation.train_test_split(X, y, test_size=0.3,random_state=0)
@@ -54,6 +61,3 @@ def runAll(X, y):
     T.add_row((["Quadratic Discriminant Analysis", qda_train_acc, qda_test_acc, qda_cv_acc]))
 
     print T
-
-X_data, y_data, dataset = load_csv('whitewines.csv')
-runAll(X_data,y_data)

@@ -7,15 +7,30 @@ nosetests
 ```
 
 ## Todo List
-- [ ] Load dataset files (categorical/numeric data)
-  - [x] .arff
-  - [x] .csv
-  - [x] .xls/.xlsx
-- [ ] Preprocessing data
+- [ ] MVC Components
+    - [ ] Model Classes
+        - [x] Algorithm
+        - [x] SupervisedAlgorithm
+        - [x] UnsupervisedAlgorithm
+    - [ ] Controller Classes
+    - [ ] View Classes
+- [ ] Demos
+  - [x] Image segmentation demo
+  - [x] Command-line GUI
+- [ ] Loading
+    - [x] File formats
+      - [x] .arff
+      - [x] .csv
+      - [x] .xls/.xlsx
+  - [x] Generate random Gaussian data w/ labels
+  - [ ] Download dataset from mldata.org
+- [x] Preprocessing data
   - [x] Standardization
   - [x] Normalization of training examples
-  - [ ] Feature Binarization
+  - [x] Feature Binarization
   - [x] Remove examples with '?' missing values
+  - [x] Imputation of missing values
+  - [x] Numerical encoding of categorical features
 - [ ] Supervised Learning
   - [ ] Linear & Quadratic Discriminant Analysis
   - [ ] SVMs
@@ -74,8 +89,5 @@ nosetests
   - [ ] Feature Extraction
     - [x] Dictionary Vectorization
   - [ ] Kernel Approximation
-- [ ] Dataset Loading Utilities
-  - [ ] Download data from mldata.org
-  - [x] Generate a random dataset w/ class labels
 - [ ] Visualizations
-    - [x] Image segmentation demo
+    - [x] Plotting features (2d, frequency chart, radial plot, etc.)
