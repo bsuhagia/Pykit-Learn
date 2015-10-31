@@ -12,8 +12,15 @@ nosetests
         - [x] Algorithm
         - [x] SupervisedAlgorithm
         - [x] UnsupervisedAlgorithm
+        - [ ] RegressionAlgorithm
+        - [ ] ExecutionReport
     - [ ] Controller Classes
+        - [ ] AlgorithmEngine
+        - [x] DataLoader
+        - [ ] PreprocessingEngine
+        - [ ] Visualizer
     - [ ] View Classes
+        - [ ] BaseView
 - [ ] Demos
   - [x] Image segmentation demo
   - [x] Command-line GUI

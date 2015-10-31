@@ -130,7 +130,7 @@ def test_generate_random():
 
 @attr('slow')
 def test_mldata():
-    dl = DataLoader()
+    dl = DatasetIO()
     X, y, df = dl.load_from_mldata('iris')
 
 # test_load_arff()

@@ -2,7 +2,9 @@
     Author: Sean Dai
     """
 from __future__ import print_function
+import cPickle
 import numpy as np
+import os
 import pandas as pd
 
 
@@ -246,9 +248,9 @@ def stack_to_data_frame(X, y):
     """
     return pd.DataFrame(np.hstack((X, y[:, np.newaxis])))
 
-class DataLoader(object):
+class DatasetIO(object):
     """
-    This class loads dataset files to manipulable numpy arrays.
+    This class performs loading and saving of dataset files.
     """
     def load_file(self, filename):
         extension = filename[filename.rfind('.'):]
@@ -286,3 +288,15 @@ class DataLoader(object):
         shutil.rmtree(test_data_home)
         data_frame = stack_to_data_frame(X, y)
         return X, y, data_frame
+
+    def pickle_files(self, files_to_save, save_dir):
+        """
+        Saves a list of files to _temp directory
+
+        Args:
+            files_to_save: List of tuples in form (obj, filename_to_save)
+            save_dir: Directory to save the files (str)
+        """
+        for obj, filename in files_to_save:
+            with open(os.path.join(save_dir, filename), 'wb') as f:
+                cPickle.dump(obj, f)

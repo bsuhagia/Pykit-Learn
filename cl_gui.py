@@ -58,29 +58,23 @@ class InvalidCommandException(Exception):
         super(InvalidCommandException, self).__init__(message)
         self.errors = errors
 
-
 def _load_file(filename):
-    extension = filename[filename.rfind('.'):]
-    if extension == '.csv':
-        return load_csv(filename, vectorize_data=True)
-    elif extension == '.arff':
-        return load_arff(filename)
-    elif extension == '.xls' or extension == '.xlsx':
-        return load_excel(filename)
-    else:
-        raise IOError('{} is not a valid filename!'.format(filename))
-
+    loader = DatasetIO()
+    return loader.load_file(filename)
 
 def load_file(filename):
     """
     Function to load a dataset file.
     """
-    X, y, data_frame = _load_file(filename)
-    pickle_files([(X, 'load_X.pkl'), (y, 'load_y.pkl'), (data_frame, 'df.pkl')])
+    X, y, df = _load_file(filename)
+
+    loader = DatasetIO()
+    loader.pickle_files([(X, 'load_X.pkl'), (y, 'load_y.pkl'), (df, 'df.pkl')],
+                        Status.TEMP_DIR)
 
     # Update appropriate status flags.
     Status.DATASET_LOADED = True
-    Status.FILENAME = filename
+    Status.FILENAME = os.path.basename(filename)
     Status.EXTENSION = filename[filename.rfind('.')]
 
     print 'Feature Array:\n %s' % X
@@ -109,7 +103,9 @@ def load_random():
     Generates a random dataset with 100 samples, 2 features, and 3 classes.
     """
     X, y, df = generate_random_points()
-    pickle_files([(X, 'load_X.pkl'), (y, 'load_y.pkl'), (df, 'df.pkl')])
+    loader = DatasetIO()
+    loader.pickle_files([(X, 'load_X.pkl'), (y, 'load_y.pkl'), (df, 'df.pkl')],
+                        Status.TEMP_DIR)
 
     # Update appropriate status flags.
     Status.DATASET_LOADED = True
@@ -117,18 +113,6 @@ def load_random():
 
     print 'Feature Array:\n %s' % X
     print 'Target classifications:\n %s' % y
-
-
-def pickle_files(files_to_save):
-    """
-    Saves a list of files to _temp directory
-
-    Input: List of tuples in form (obj, filename_to_save)
-    """
-    for obj, filename in files_to_save:
-        with open("_temp/" + filename, 'wb') as f:
-            cPickle.dump(obj, f)
-
 
 def get_pickled_dataset():
     """
@@ -316,6 +300,7 @@ def dispatch_preprocess(args):
         new_X = pe.standardize(X)
         print new_X
         update_feature_array(new_X)
+
     if p_args.norm:
         print "Normalizing feature array..."
         X, y, _ = get_pickled_dataset()
