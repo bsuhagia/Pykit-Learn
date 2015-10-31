@@ -2,6 +2,7 @@
     Author: Sean Dai
 """
 from sklearn.base import BaseEstimator
+from sklearn.base import clone
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.mixture import GMM
 from pk.utils.loading import load_csv
@@ -34,6 +35,8 @@ class Algorithm(BaseModel):
     def __init__(self, clf=BaseEstimator()):
         super(Algorithm, self).__init__()
         self.clf = clf
+        # Create a deep copy of origin classifier for retraining purposes.
+        self.orig_clf = clone(clf)
         self.clf_name = type(clf).__name__
         self.fitted = False
 
@@ -54,6 +57,11 @@ class Algorithm(BaseModel):
         self.fitted = True
         return self.clf.fit(*args, **kwargs)
 
+    def predict(self, X):
+        if not self.fitted:
+            raise Exception("Can't predict with untrained classifier!")
+        return self.clf.predict(X)
+
 class SupervisedAlgorithm(Algorithm):
     """
     Wrapper class for supervised learning algorithms.
@@ -63,11 +71,6 @@ class SupervisedAlgorithm(Algorithm):
 
     def fit(self, X, y):
         self.clf = self._fit(X, y)
-
-    def predict(self, X):
-        if not self.fitted:
-            raise Exception("Can't predict with untrained classifier!")
-        return self.clf.predict(X)
 
 class UnsupervisedAlgorithm(Algorithm):
     """
@@ -79,19 +82,18 @@ class UnsupervisedAlgorithm(Algorithm):
     def fit(self, X):
         self.clf = self._fit(X)
 
-    def predict(self, X):
-        if not self.fitted:
-            raise Exception("Can't predict with untrained classifier!")
-        return self.clf.predict(X)
 
 # X,y,_ = load_csv('tests/iris2.csv')
 # clf = GMM(n_components=3)
 # a = UnsupervisedAlgorithm(clf)
 # print a.params
 # print a.fitted
+# import time
+# s = time.time()
 # a.fit(X)
+# print "Took %f secs" % (time.time() - s)
 # print a.fitted
 # print a.params
 # print a
 # print a.clf.means_
-# print a.predict([[1,2,3,11114]])
+# print a.predict([[1,2,3,4]])

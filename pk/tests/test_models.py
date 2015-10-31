@@ -1,6 +1,8 @@
 from pk.models import *
 from sklearn.datasets import load_iris
 from sklearn.tree import DecisionTreeClassifier
+from sklearn.mixture import GMM
+from nose.tools import raises
 
 def test_alg_creation():
     alg = Algorithm(DecisionTreeClassifier())
@@ -17,5 +19,10 @@ def test_fit_supervised_algorithm_with_dt():
     alg.fit(X,y)
     assert alg.fitted == True
     assert alg.params['tree_'] is not None
+
+@raises(Exception)
+def test_predict_untrained():
+    alg = UnsupervisedAlgorithm(GMM())
+    alg.predict([0])
 
 
