@@ -17,13 +17,13 @@ nosetests
 - [ ] Demos
   - [x] Image segmentation demo
   - [x] Command-line GUI
-- [ ] Loading
+- [x] Loading
     - [x] File formats
       - [x] .arff
       - [x] .csv
       - [x] .xls/.xlsx
   - [x] Generate random Gaussian data w/ labels
-  - [ ] Download dataset from mldata.org
+  - [x] Download dataset from mldata.org
 - [x] Preprocessing data
   - [x] Standardization
   - [x] Normalization of training examples

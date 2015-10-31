@@ -7,6 +7,7 @@ import pandas as pd
 
 
 from sklearn.feature_extraction import DictVectorizer
+from sklearn.datasets import fetch_mldata
 from sklearn.datasets import make_blobs
 from scipy.io.arff import loadarff
 
@@ -232,6 +233,56 @@ def stack_to_data_frame(X, y):
         y: target labels (1, n_samples)
 
     Returns:
-        Pandas DataFrame with X and y together
+        Pandas DataFrame with y.T concatenated horizontally to X.
+
+    Examples:
+    X = [[1,2,3]
+         [4,5,6]
+         [7,8,9]]
+    y = ['yes', 'no', yes']
+    stack_to_data_frame(X,y) = [[1,2,3,'yes']
+                                [4,5,6,'no']
+                                [7,8,9,'yes']]
     """
     return pd.DataFrame(np.hstack((X, y[:, np.newaxis])))
+
+class DataLoader(object):
+    """
+    This class loads dataset files to manipulable numpy arrays.
+    """
+    def load_file(self, filename):
+        extension = filename[filename.rfind('.'):]
+        if extension == '.csv':
+            return load_csv(filename)
+        elif extension == '.arff':
+            return load_arff(filename)
+        elif extension == '.xls' or extension == '.xlsx':
+            return load_excel(filename)
+        else:
+            raise IOError('{} is not a valid filename!'.format(filename))
+
+    def load_from_mldata(self, dataname):
+        """
+        Loads a dataset from the mldata.org repository.
+
+        Args:
+            dataname: Name of the dataset on mldata.org (str)
+                Eg. "regression-datasets stock", "leukemia"
+
+        Returns:
+            X : a (num_examples, num_features) numpy array of examples X
+            y : the class labels y of size (1, num_examples)
+            data_frame: Pandas DataFrame object
+        """
+        import tempfile
+        import shutil
+
+        # Create a temporary directory to store the downloaded dataset.
+        test_data_home = tempfile.mkdtemp()
+        # Fetch the dataset from ml data
+        dataset = fetch_mldata(dataname, data_home=test_data_home, transpose_data=True)
+        X, y = dataset.data, dataset.target
+        # Remove the temporary directory
+        shutil.rmtree(test_data_home)
+        data_frame = stack_to_data_frame(X, y)
+        return X, y, data_frame

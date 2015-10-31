@@ -2,6 +2,7 @@
     Author: Sean Dai
 """
 import cl_gui
+from nose.plugins.attrib import attr
 from nose.tools import nottest
 from nose.tools import assert_raises
 from nose.tools import assert_true
@@ -19,6 +20,7 @@ def td():
 def get_test_accuracy():
     pass
 
+@attr('slow')
 def test_visualize_iris():
     setup()
     cl_gui.process('load pk/tests/iris.csv')
@@ -29,6 +31,7 @@ def test_visualize_iris():
     assert_true('plot_radial.png' in temp_files)
     td()
 
+@attr('slow')
 def test_preprocess_flow():
     setup()
     cl_gui.process('load pk/tests/iris2.csv')
@@ -38,12 +41,14 @@ def test_preprocess_flow():
     assert_true('plot_radial.png' in temp_files)
     td()
 
+@attr('slow')
 def test_run_decision_tree():
     setup()
     cl_gui.process('load pk/tests/iris2.csv')
     cl_gui.process('run -A dt -test_ratio .5 -cv 15')
     td()
 
+@attr('slow')
 def test_plot_2d():
     setup()
     cl_gui.process('load_random')

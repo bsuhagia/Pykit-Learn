@@ -5,6 +5,7 @@ import os
 
 from numpy.testing import assert_array_equal
 from nose.tools import assert_true
+from nose.plugins.attrib import attr
 from numpy.testing import assert_array_almost_equal
 from pandas.util.testing import assert_frame_equal
 from pk.utils.loading import *
@@ -126,6 +127,11 @@ def test_generate_random():
     assert_array_almost_equal(X, expX)
     assert_array_equal(y, expY)
     assert_frame_equal(df, exp_df)
+
+@attr('slow')
+def test_mldata():
+    dl = DataLoader()
+    X, y, df = dl.load_from_mldata('iris')
 
 # test_load_arff()
 # test_load_arff_categorical()
