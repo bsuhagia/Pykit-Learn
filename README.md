@@ -39,26 +39,26 @@ nosetests
   - [x] Imputation of missing values
   - [x] Numerical encoding of categorical features
 - [ ] Supervised Learning
-  - [ ] Linear & Quadratic Discriminant Analysis
-  - [ ] SVMs
-  - [ ] Stochastic Gradient Descent
-  - [ ] kNN
-  - [X] Decision Trees
-  - [ ] Ensemble Methods
-    - [ ] Bagging
-    - [ ] Randomized Trees
-    - [ ] AdaBoost
+  - [x] Linear & Quadratic Discriminant Analysis
+  - [x] SVMs
+  - [x] Stochastic Gradient Descent
+  - [x] kNN
+  - [x] Decision Trees
+  - [x] Ensemble Methods
+    - [x] Bagging
+    - [x] Randomized Trees
+    - [x] AdaBoost
   - [ ] Multiclass and Multilabel Algorithms
   - [ ] Feature Selection
     - [ ] Variance thresholding
     - [ ] Univariate feature selection
-  - [ ] Generalized Linear Models
-    - [ ] Least Squares
-    - [ ] RANSAC
-    - [ ] Bayesian
-    - [ ] Logistic
-    - [ ] Polynomial
-  - [ ] Kernel Ridge Regression
+  - [x] Generalized Linear Models
+    - [x] Least Squares
+    - [x] RANSAC
+    - [x] Bayesian
+    - [x] Logistic
+    - [x] Polynomial
+  - [x] Kernel Ridge Regression
 - [ ] Unsupervised Learning
   - [ ] Gaussian Mixture Models
     - [ ] GMM
