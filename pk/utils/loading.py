@@ -282,10 +282,16 @@ class DatasetIO(object):
         # Create a temporary directory to store the downloaded dataset.
         test_data_home = tempfile.mkdtemp()
         # Fetch the dataset from ml data
-        dataset = fetch_mldata(dataname, data_home=test_data_home, transpose_data=True)
+        try:
+            dataset = fetch_mldata(dataname, data_home=test_data_home,
+                                   transpose_data=True)
+        except Exception as e:
+            shutil.rmtree(test_data_home, ignore_errors=True)
+            raise Exception("No connection to mldata.org server!", e.message)
+
         X, y = dataset.data, dataset.target
         # Remove the temporary directory
-        shutil.rmtree(test_data_home)
+        shutil.rmtree(test_data_home, ignore_errors=True)
         data_frame = stack_to_data_frame(X, y)
         return X, y, data_frame
 

@@ -17,7 +17,7 @@ nosetests
     - [ ] Controller Classes
         - [ ] AlgorithmEngine
         - [x] DatasetIO
-        - [ ] PreprocessingEngine
+        - [x] PreprocessingEngine
         - [ ] Visualizer
     - [ ] View Classes
         - [ ] BaseView
