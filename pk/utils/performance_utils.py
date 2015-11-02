@@ -1,6 +1,6 @@
 __author__ = 'Bhavesh'
 
-from sklearn.metrics import confusion_matrix
+from sklearn.metrics import confusion_matrix, explained_variance_score, mean_squared_error, mean_absolute_error, r2_score, median_absolute_error
 import matplotlib.pyplot as plt
 import numpy as np
 from sklearn import cross_validation
@@ -43,6 +43,25 @@ def get_cv_accuracy(clf, X, y, cv=10):
     # print 'Average accuracy: %f (+/- %f)' % (avg, scores.std() * 2)
     return scores, round(avg*100, 5)
 
+def get_variance_score(clf, X_test, true_y):
+    pred_y = clf.predict(X_test)
+    return round(explained_variance_score(true_y, pred_y), 4)
+
+def get_mean_abs_error(clf, X_test, true_y):
+    pred_y = clf.predict(X_test)
+    return round(mean_absolute_error(true_y, pred_y), 4)
+
+def get_mean_squared_error(clf, X_test, true_y):
+    pred_y = clf.predict(X_test)
+    return round(mean_squared_error(true_y, pred_y), 4)
+
+def get_median_abs_error(clf, X_test, true_y):
+    pred_y = clf.predict(X_test)
+    return round(median_absolute_error(true_y, pred_y), 4)
+
+def get_r2_score(clf, X_test, true_y):
+    pred_y = clf.predict(X_test)
+    return round(r2_score(true_y, pred_y), 4)
 
 def benchmark(X, y, training_func, *args, **kwargs):
     clf = training_func(X, y, *args, **kwargs)
