@@ -6,7 +6,7 @@ from prettytable import PrettyTable
 from pk.utils.loading import *
 import warnings
 
-def runAll(X, y):
+def runall_classification(X, y):
     warnings.filterwarnings('ignore')
     T = PrettyTable(["Method", "Train Accuracy (%)", "Test Accuracy (%)", "Cross Validation Accuracy (%)"])
     X_train, X_test, y_train, y_test = cross_validation.train_test_split(X, y, test_size=0.3,random_state=0)
@@ -73,4 +73,4 @@ def runAll(X, y):
     print T
 
 X_data, y_data, dataset = load_csv('iris2.csv')
-runAll(X_data,y_data)
+runall_classification(X_data,y_data)
