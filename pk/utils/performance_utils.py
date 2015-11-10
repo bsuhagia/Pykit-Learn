@@ -1,6 +1,6 @@
 __author__ = 'Bhavesh'
 
-from sklearn.metrics import confusion_matrix, explained_variance_score, mean_squared_error, mean_absolute_error, r2_score, median_absolute_error
+from sklearn.metrics import confusion_matrix, explained_variance_score, mean_squared_error, mean_absolute_error, r2_score, median_absolute_error, adjusted_rand_score, adjusted_mutual_info_score, homogeneity_score, silhouette_score, v_measure_score
 import matplotlib.pyplot as plt
 import numpy as np
 from sklearn import cross_validation
@@ -62,6 +62,26 @@ def get_median_abs_error(clf, X_test, true_y):
 def get_r2_score(clf, X_test, true_y):
     pred_y = clf.predict(X_test)
     return round(r2_score(true_y, pred_y), 4)
+
+def get_adjusted_rand_index(clf, X_test, true_y):
+    pred_y = clf.predict(X_test)
+    return round(adjusted_rand_score(true_y, pred_y), 4)
+
+def get_adjusted_mutual_info(clf, X_test, true_y):
+    pred_y = clf.predict(X_test)
+    return round(adjusted_mutual_info_score(true_y, pred_y), 4)
+
+def get_homogenity_score(clf, X_test, true_y):
+    pred_y = clf.predict(X_test)
+    return round(homogeneity_score(true_y, pred_y), 4)
+
+def get_vscore(clf, X_test, true_y):
+    pred_y = clf.predict(X_test)
+    return round(v_measure_score(true_y, pred_y), 4)
+
+def get_silhouette_score(clf, X):
+    # pred_y = clf.predict(X_test)
+    return round(silhouette_score(X, clf.means_, metric='euclidean'))
 
 def benchmark(X, y, training_func, *args, **kwargs):
     clf = training_func(X, y, *args, **kwargs)
