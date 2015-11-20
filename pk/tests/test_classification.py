@@ -1,6 +1,7 @@
 __author__ = 'Bhavesh'
 
-from pk.utils.performance_utils import *
+"""
+from pk.utils.metrics import *
 from pk.utils.classification_utils import *
 from prettytable import PrettyTable
 from pk.utils.loading import *
@@ -74,3 +75,4 @@ def runall_classification(X, y):
 
 X_data, y_data, dataset = load_csv('iris2.csv')
 runall_classification(X_data,y_data)
+"""

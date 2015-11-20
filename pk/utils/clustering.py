@@ -1,26 +1,97 @@
-__author__ = 'Bhavesh'
-
+"""This module provides clustering utility functions.
+    Author: Bhavesh
+"""
 from sklearn import cluster
 from sklearn.mixture import GMM, DPGMM
 
 def train_gmm(X, n_components=3, covariance_type='diag', random_state=None,
               thresh=None, tol=0.001, min_covar=0.001, n_iter=100, n_init=1,
               params='wmc', init_params='wmc'):
+    """Variational Inference for the Infinite Gaussian Mixture Model.
+
+    DPGMM stands for Dirichlet Process Gaussian Mixture Model, and it
+    is an infinite mixture model with the Dirichlet Process as a prior
+    distribution on the number of clusters. In practice the
+    approximate inference algorithm uses a truncated distribution with
+    a fixed maximum number of components, but almost always the number
+    of components actually used depends on the data.
+
+    Stick-breaking Representation of a Gaussian mixture model
+    probability distribution. This class allows for easy and efficient
+    inference of an approximate posterior distribution over the
+    parameters of a Gaussian mixture model with a variable number of
+    components (smaller than the truncation parameter n_components).
+
+    Initialization is with normally-distributed means and identity
+    covariance, for proper convergence.
+
+    Parameters
+    ----------
+    n_components: int, optional
+        Number of mixture components. Defaults to 1.
+
+    covariance_type: string, optional
+        String describing the type of covariance parameters to
+        use.  Must be one of 'spherical', 'tied', 'diag', 'full'.
+        Defaults to 'diag'.
+
+    alpha: float, optional
+        Real number representing the concentration parameter of
+        the dirichlet process. Intuitively, the Dirichlet Process
+        is as likely to start a new cluster for a point as it is
+        to add that point to a cluster with alpha elements. A
+        higher alpha means more clusters, as the expected number
+        of clusters is ``alpha*log(N)``. Defaults to 1.
+
+    thresh : float, optional
+        Convergence threshold.
+    n_iter : int, optional
+        Maximum number of iterations to perform before convergence.
+    params : string, optional
+        Controls which parameters are updated in the training
+        process.  Can contain any combination of 'w' for weights,
+        'm' for means, and 'c' for covars.  Defaults to 'wmc'.
+    init_params : string, optional
+        Controls which parameters are updated in the initialization
+        process.  Can contain any combination of 'w' for weights,
+        'm' for means, and 'c' for covars.  Defaults to 'wmc'.
+
+    Attributes
+    ----------
+    covariance_type : string
+        String describing the type of covariance parameters used by
+        the DP-GMM.  Must be one of 'spherical', 'tied', 'diag', 'full'.
+
+    n_components : int
+        Number of mixture components.
+
+    `weights_` : array, shape (`n_components`,)
+        Mixing weights for each mixture component.
+
+    `means_` : array, shape (`n_components`, `n_features`)
+        Mean parameters for each mixture component.
+
+    `precs_` : array
+        Precision (inverse covariance) parameters for each mixture
+        component.  The shape depends on `covariance_type`::
+
+            (`n_components`, 'n_features')                if 'spherical',
+            (`n_features`, `n_features`)                  if 'tied',
+            (`n_components`, `n_features`)                if 'diag',
+            (`n_components`, `n_features`, `n_features`)  if 'full'
+
+    `converged_` : bool
+        True when convergence was reached in fit(), False otherwise.
+
+    See Also
+    --------
+    GMM : Finite Gaussian mixture model fit with EM
+
+    VBGMM : Finite Gaussian mixture model fit with a variational
+        algorithm, better for situations where there might be too little
+        data to get a good estimate of the covariance matrix.
     """
-    This function trains a gaussian mixture model for clustering
-    :param X:
-    :param n_components:
-    :param covariance_type:
-    :param random_state:
-    :param thresh:
-    :param tol:
-    :param min_covar:
-    :param n_iter:
-    :param n_init:
-    :param params:
-    :param init_params:
-    :return: a trained GMM clustering model
-    """
+
     model = GMM(n_components=n_components,
                 covariance_type=covariance_type,
                 random_state=random_state,

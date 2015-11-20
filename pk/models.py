@@ -3,9 +3,6 @@
 """
 from sklearn.base import BaseEstimator
 from sklearn.base import clone
-from sklearn.tree import DecisionTreeClassifier
-from sklearn.mixture import GMM
-from pk.utils.loading import load_csv
 
 class BaseModel(object):
     """
@@ -36,7 +33,6 @@ class Algorithm(BaseModel):
         super(Algorithm, self).__init__()
         self.clf = clf
         # Create a deep copy of origin classifier for retraining purposes.
-        self.orig_clf = clone(clf)
         self.clf_name = type(clf).__name__
         self.fitted = False
 
@@ -83,6 +79,9 @@ class UnsupervisedAlgorithm(Algorithm):
         self.clf = self._fit(X)
 
 
+# from sklearn.tree import DecisionTreeClassifier
+# from sklearn.mixture import GMM
+# from pk.utils.loading import load_csv
 # X,y,_ = load_csv('tests/iris2.csv')
 # clf = GMM(n_components=3)
 # a = UnsupervisedAlgorithm(clf)

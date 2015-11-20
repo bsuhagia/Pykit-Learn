@@ -5,7 +5,7 @@ from numpy.testing import assert_array_equal
 from nose.tools import assert_true
 from numpy.testing import assert_array_almost_equal
 
-from pk.utils.preprocess_utils import PreprocessingEngine
+from pk.utils.preprocess import PreprocessingEngine
 from sklearn.datasets import load_digits
 from sklearn.datasets import load_boston
 from sklearn.preprocessing import StandardScaler

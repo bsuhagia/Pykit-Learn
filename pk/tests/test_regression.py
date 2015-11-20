@@ -1,9 +1,10 @@
+"""
 __author__ = 'Bhavesh'
 
 
 from pk.utils.loading import *
 from pk.utils.regression_utils import *
-from pk.utils.performance_utils import *
+from pk.utils.metrics import *
 from prettytable import PrettyTable
 def runall_regression(X, y):
     T = PrettyTable(["Regression Method", "Train Accuracy (%)", "Test Accuracy (%)", "Variance score", "Mean Squared Error", "Mean Abs Error", "Median Abs Error", "R2 score"])
@@ -78,4 +79,4 @@ def runall_regression(X, y):
 X, y, _ = load_csv('concrete.csv')
 runall_regression(X, y)
 
-
+"""

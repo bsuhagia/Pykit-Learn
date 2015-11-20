@@ -28,10 +28,10 @@ import seaborn as sns
 from PIL import Image
 
 from pk.utils.loading import *
-from pk.utils.preprocess_utils import *
+from pk.utils.preprocess import *
 from pk.utils.prygress import progress
 from pk.utils.classification_utils import *
-from pk.utils.performance_utils import  *
+from pk.utils.metrics import  *
 
 class Status(object):
     DATASET_LOADED = False
