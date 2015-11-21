@@ -3,6 +3,10 @@ GUI.
     Author: Sean Dai
 """
 
+# Ignore any warnings issued by third-party modules
+import warnings
+warnings.filterwarnings("ignore")
+
 import cPickle
 import logging
 import multiprocessing
@@ -15,16 +19,15 @@ from collections import Counter
 from glob import glob
 from os.path import join
 
-
 from pandas.tools.plotting import radviz
 from pandas.tools.plotting import scatter_matrix
 from pandas.tools.plotting import andrews_curves
+from PyQt4 import QtGui
 from sklearn import cross_validation
-
-
 
 import matplotlib.pyplot as plt
 import seaborn as sns
+import wx
 from PIL import Image
 
 from pk.utils.loading import *
@@ -32,6 +35,8 @@ from pk.utils.preprocess import *
 from pk.utils.prygress import progress
 from pk.utils.classification_utils import *
 from pk.utils.metrics import  *
+
+app = QtGui.QApplication(sys.argv)
 
 class Status(object):
     DATASET_LOADED = False
@@ -48,7 +53,7 @@ class Status(object):
     FINISH_PLOTS = False
     PLOT_COMMANDS = {'plot_frequency', 'plot_feature_matrix', 'plot_radial',
                      'plot_andrews', 'plot_scatter_matrix', 'plot_2d'}
-    ALL_COMMANDS = list(PLOT_COMMANDS) + ['load', 'load_random', 'preprocess',
+    ALL_COMMANDS = list(PLOT_COMMANDS) + ['load', 'load_file_gui', 'load_random', 'preprocess',
                                           'run', 'visualize', 'help', 'quit',
                                           'see_images']
 
@@ -81,21 +86,13 @@ def load_file(filename):
     print 'Target classifications:\n %s' % y
 
 def load_file_gui():
-    import wx
+    from pk.controller import ViewGenerator
+    popup = ViewGenerator()
+    filter = "CSV files (*.csv);;XLS files (*.xls);;ARFF files (*.arff)"
+    filename = popup.open_file_dialog(app, filter)
 
-    def get_path(wildcard):
-        app = wx.App(None)
-        style = wx.FD_OPEN | wx.FD_FILE_MUST_EXIST
-        dialog = wx.FileDialog(None, 'Open Files', wildcard=wildcard, style=style)
-        if dialog.ShowModal() == wx.ID_OK:
-            path = dialog.GetPath()
-        else:
-            path = None
-        dialog.Destroy()
-        app.Destroy()
-        return path
-
-    filename = get_path(("CSV files (*.csv)|*.csv|XLS files (*.xls)|*.xls|ARFF files (*.arff)|*.arff"))
+    if filename == '':
+        return
     load_file(filename)
 
 def load_random():
@@ -362,11 +359,6 @@ def setup():
                         filename='cl_gui.log')
     logging.info("Starting application...")
 
-    # Ignore any warnings issued by third-party modules
-    import warnings
-
-    warnings.filterwarnings("ignore")
-
     # Code snippet for recalling previous commands with the
     # 'up' and 'down' arrow keys.
     import rlcompleter
@@ -415,7 +407,7 @@ def setup():
         readline.parse_and_bind("bind '\t' rl_complete")
     else:
         readline.parse_and_bind("tab: complete")
-    del hist_file, readline, rlcompleter, warnings
+    del hist_file, readline, rlcompleter
 
 
 def quit_gui():
