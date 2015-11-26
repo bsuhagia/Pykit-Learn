@@ -34,7 +34,8 @@ from pk.utils.loading import *
 from pk.utils.preprocess import *
 from pk.utils.prygress import progress
 from pk.utils.classification_utils import *
-from pk.utils.metrics import  *
+from pk.utils.metrics import *
+from pk.controller import ViewGenerator
 
 app = QtGui.QApplication(sys.argv)
 
@@ -465,6 +466,9 @@ def process(line):
         load_random()
     elif command == 'load_file_gui':
         load_file_gui()
+    elif command == 'preprocess_gui':
+        gen = ViewGenerator()
+        gen.get_preprocess_options(app)
     elif command == 'preprocess':
         dispatch_preprocess(args)
     elif command in Status.PLOT_COMMANDS:
@@ -517,3 +521,5 @@ def main():
 
 if __name__ == "__main__":
     main()
+    # gen = ViewGenerator()
+    # gen.get_preprocess_options(app)
