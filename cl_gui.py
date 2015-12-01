@@ -333,17 +333,19 @@ def dispatch_run(args):
                     random_state=0)
             # Train the Decision Tree classifier
             clf = train_decision_tree(X_train, y_train)
-            get_train_accuracy(clf, X_train, y_train)
+            print "Train accuracy: %f" % get_train_accuracy(clf, X_train, y_train)
 
             # Output metrics from train-test split
             if X_test is not None and y_test is not None:
-                get_test_accuracy(clf, X_test, y_test)
+                print "Test accuracy: %f%%" % get_test_accuracy(clf, X_test, y_test)
 
             # Get cross-validation score(s)
             if p_args.cv:
                 print ""
                 print "Cross Validation Scores:"
-                get_cv_accuracy(clf, X_train, y_train, cv=p_args.cv)
+                scores, avg = get_cv_accuracy(clf, X_train, y_train, cv=p_args.cv)
+                print 'Scores: ' + ', '.join(map(str, scores))
+                print 'Average accuracy: %f (+/- %f)' % (avg, scores.std() * 2)
 
             # Plot the confusion matrix
             cm = get_confusion_matrix(clf, X_test, y_test)
@@ -521,5 +523,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-    # gen = ViewGenerator()
-    # gen.get_preprocess_options(app)

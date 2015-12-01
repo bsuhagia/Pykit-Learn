@@ -32,6 +32,7 @@ class ViewGenerator(object):
                 self.cbox1 = QCheckBox("Normalize")
                 self.cbox2 = QCheckBox("Standardize")
                 self.cbox3 = QCheckBox("Remove examples containing:")
+
                 text_area = QLineEdit(self.cbox3)
                 text_area.setText("?")
                 dbx = QDialogButtonBox(self)
