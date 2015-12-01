@@ -14,7 +14,7 @@ sudo pip install pandas
 sudo pip install scipy
 sudo pip install seaborn
 sudo pip install Pillow
-sudo pip install nosetests
+sudo pip install nose
 
 PROJ_DIR=`pwd`
 echo `export PYTHONPATH=$PYTHONPATH:$PROJ_DIR` >> ~/.bash_profile
