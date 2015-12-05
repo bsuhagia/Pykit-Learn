@@ -16,6 +16,7 @@ def plot_confusion_matrix(cm, y, title='Confusion matrix', cmap=plt.cm.Blues,
                           continuous_class=False):
     if continuous_class:
         return None
+    plt.clf()
     plt.imshow(cm, interpolation='nearest', cmap=cmap)
     plt.title(title)
     plt.colorbar()
