@@ -9,32 +9,33 @@ Release Notes
 
 Installation Guide
 ------------------
+The installation instructions are written primarily for Mac OSX machines. (although I think they might work on Linux systems too)
 
 ### Mac OSX
   
 In order to run the project, install the following dependencies:
 
-1. ![Python] (https://drive.google.com/open?id=1TYYzeYfbz6GQZPwTKHsBl528ujDL7akzCeEhxbaLMls)
+1. [Python](https://drive.google.com/open?id=1TYYzeYfbz6GQZPwTKHsBl528ujDL7akzCeEhxbaLMls)
 
-2. ![pip] (https://pip.pypa.io/en/stable/installing/)
+2. [pip](https://pip.pypa.io/en/stable/installing/)
 
-3. ![scikit-Learn] (http://scikit-learn.org/stable/install.html)
+3. [scikit-Learn](http://scikit-learn.org/stable/install.html)
 
-4. ![numpy] (https://drive.google.com/open?id=1TYYzeYfbz6GQZPwTKHsBl528ujDL7akzCeEhxbaLMls)
+4. [numpy](https://drive.google.com/open?id=1TYYzeYfbz6GQZPwTKHsBl528ujDL7akzCeEhxbaLMls)
 
-5. ![scipy] (https://drive.google.com/open?id=1TYYzeYfbz6GQZPwTKHsBl528ujDL7akzCeEhxbaLMls)
+5. [scipy](https://drive.google.com/open?id=1TYYzeYfbz6GQZPwTKHsBl528ujDL7akzCeEhxbaLMls)
 
-6. ![matplotlb] (http://matplotlib.org/users/installing.html)
+6. [matplotlb](http://matplotlib.org/users/installing.html)
 
-7. ![seaborn] (http://stanford.edu/~mwaskom/software/seaborn/installing.html)
+7. [seaborn](http://stanford.edu/~mwaskom/software/seaborn/installing.html)
 
-8. ![PIL] (http://www.pythonware.com/products/pil/)
+8. [PIL](http://www.pythonware.com/products/pil/)
 
-9. ![pandas] (http://pandas.pydata.org/pandas-docs/stable/install.html)
+9. [pandas](http://pandas.pydata.org/pandas-docs/stable/install.html)
 
-10. ![nose] (https://nose.readthedocs.org/en/latest/)
+10. [nose](https://nose.readthedocs.org/en/latest/)
 
-11. ![PyQt] (http://pyqt.sourceforge.net/Docs/PyQt4/installation.html)
+11. [PyQt](http://pyqt.sourceforge.net/Docs/PyQt4/installation.html)
 
 Alternatively, you can enter the makefile command
 ```
@@ -71,9 +72,14 @@ Commands                     | Example                               | Descripti
 ## Examples
 
 ## Testing
-The unit-testing framework used in this project is the **nose** Python module, and enter the following command in the root directory of the project:
+The unit-testing framework used in this project is the **nose** Python module. Running the unit tests yourself
+is as simple as entering the following command in the root directory of the project:
 ```
 make test
+```
+To run all the unit tests (this might take some time), type
+```
+make test-all
 ```
 
 ## Todo List
