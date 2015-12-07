@@ -5,7 +5,17 @@ A simple GUI for doing fast-paced machine learning in Python.
 Release Notes
 -------------
 ### Version 0.1
-  
+---------------
+**Features**
+* Various dataset loading utilities (see pk/utils/loading.py)
+* Preprocessing dataset commands
+* Visualizations of input data (2d-dist, histogram of class frequencies, Andrews curve, radial plot, etc.)
+* Supervised learning features
+* Clustering
+
+**Known bugs**
+* Concurrency issue caused by running two instances of cl_gui.py simultaneously
+* Extra blank window when plotting confusion matrix
 
 Installation Guide
 ------------------
@@ -16,25 +26,15 @@ The installation instructions are written primarily for Mac OSX machines. (altho
 In order to run the project, install the following dependencies:
 
 1. [Python](https://drive.google.com/open?id=1TYYzeYfbz6GQZPwTKHsBl528ujDL7akzCeEhxbaLMls)
-
 2. [pip](https://pip.pypa.io/en/stable/installing/)
-
 3. [scikit-Learn](http://scikit-learn.org/stable/install.html)
-
 4. [numpy](https://drive.google.com/open?id=1TYYzeYfbz6GQZPwTKHsBl528ujDL7akzCeEhxbaLMls)
-
 5. [scipy](https://drive.google.com/open?id=1TYYzeYfbz6GQZPwTKHsBl528ujDL7akzCeEhxbaLMls)
-
 6. [matplotlb](http://matplotlib.org/users/installing.html)
-
 7. [seaborn](http://stanford.edu/~mwaskom/software/seaborn/installing.html)
-
 8. [PIL](http://www.pythonware.com/products/pil/)
-
 9. [pandas](http://pandas.pydata.org/pandas-docs/stable/install.html)
-
 10. [nose](https://nose.readthedocs.org/en/latest/)
-
 11. [PyQt](http://pyqt.sourceforge.net/Docs/PyQt4/installation.html)
 
 Alternatively, you can enter the makefile command
@@ -56,6 +56,7 @@ Commands                     | Example                               | Descripti
 ---------------------------- | ------------------------------------- | ----------------
 **load** [file]              | `load ~/Downloads/data.csv`           | Loads the dataset at the path specified by [file]. No quotes "" around the filename!
 **load_random**              | `load_random`                         | Load a randomly generated dataset with 3 classes.
+**load_file_gui**            |                                       | Opens a file dialog for selecting the desired file.
 **plot_2d**                  |                                       | Plot a 2-D distribution of the dataset.
 **plot_andrews**             |                                       | Plot an Andrews curve of the dataset.
 **plot_frequency**           |                                       | View the frequency of each class label.
@@ -70,6 +71,45 @@ Commands                     | Example                               | Descripti
 
 
 ## Examples
+### Supervised Learning with the Iris Dataset
+**Step 1: Loading the file**
+```
+>> load pk/tests/iris2.csv
+```
+**Step 2: Visualizing the input in 2-D**
+```
+>> plot_2d
+Creating visualization(s).
+Viewing generated plots...
+```
+![1] (https://drive.google.com/file/d/0B1gyF7KX7pnHS05NVlhUWWdJVmM/view?usp=sharing)
+
+**Step 3: Preprocessing the input dataset**
+```
+>> preprocess -h
+usage: cl_gui.py [-h] [-std] [-norm]
+
+optional arguments:
+  -h, --help  show this help message and exit
+  -std        Standardize the feature array.
+  -norm       Normalize the values of each feature.
+0
+>> preprocess -std
+```
+
+**Step 4: Fitting a decision tree learner on Iris**
+```
+run -A dt -test_ratio .3
+Running decision tree algorithm on dataset...
+Decision Tree done!
+Train accuracy: 100.000000
+Test accuracy: 96.000000%
+Confusion Matrix is:
+[[16  0  0]
+ [ 0 18  1]
+ [ 0  1 14]]
+```
+![2] (https://drive.google.com/file/d/0B1gyF7KX7pnHSTlTTW9KbTk3SVE/view?usp=sharing)
 
 ## Testing
 The unit-testing framework used in this project is the **nose** Python module. Running the unit tests yourself
