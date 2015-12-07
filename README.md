@@ -82,7 +82,7 @@ Commands                     | Example                               | Descripti
 Creating visualization(s).
 Viewing generated plots...
 ```
-![1] (https://drive.google.com/file/d/0B1gyF7KX7pnHS05NVlhUWWdJVmM/view?usp=sharing)
+![1] (http://i.imgur.com/94F1iXg.png)
 
 **Step 3: Preprocessing the input dataset**
 ```
@@ -109,7 +109,7 @@ Confusion Matrix is:
  [ 0 18  1]
  [ 0  1 14]]
 ```
-![2] (https://drive.google.com/file/d/0B1gyF7KX7pnHSTlTTW9KbTk3SVE/view?usp=sharing)
+![2] (http://i.imgur.com/jXRDZhV.png)
 
 ## Testing
 The unit-testing framework used in this project is the **nose** Python module. Running the unit tests yourself
