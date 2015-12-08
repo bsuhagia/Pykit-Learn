@@ -75,6 +75,17 @@ Commands                     | Example                               | Descripti
 **Step 1: Loading the file**
 ```
 >> load pk/tests/iris2.csv
+Feature Array:
+ [[ 5.1  3.5  1.4  0.2]
+ [ 4.9  3.   1.4  0.2]
+ [ 4.7  3.2  1.3  0.2]
+  ...
+ [ 6.2  3.4  5.4  2.3]
+ [ 5.9  3.   5.1  1.8]]
+Target classifications:
+ ['setosa' 'setosa' 'setosa' ...
+ 'versicolor' 'versicolor' ...
+ 'virginica']
 ```
 **Step 2: Visualizing the input in 2-D**
 ```
@@ -95,11 +106,18 @@ optional arguments:
   -norm       Normalize the values of each feature.
 0
 >> preprocess -std
+Standardizing feature array...
+[[ -9.00681170e-01   1.03205722e+00  -1.34127240e+00  -1.31297673e+00]
+ [ -1.14301691e+00  -1.24957601e-01  -1.34127240e+00  -1.31297673e+00]
+ [ -1.38535265e+00   3.37848329e-01  -1.39813811e+00  -1.31297673e+00]
+ [ -1.50652052e+00   1.06445364e-01  -1.28440670e+00  -1.31297673e+00]
+ ...
+ [  6.86617933e-02  -1.24957601e-01   7.62758643e-01   7.90590793e-01]]
 ```
 
 **Step 4: Fitting a decision tree learner on Iris**
 ```
-run -A dt -test_ratio .3
+>> run -A dt -test_ratio .3
 Running decision tree algorithm on dataset...
 Decision Tree done!
 Train accuracy: 100.000000
